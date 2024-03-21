@@ -10,7 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 22dfce7983eb81544aeeb94dd55e3716, type: 3}
-  m_Name: Resource Stone Type
+  m_Name: Stone Resource Type
   m_EditorClassIdentifier: 
-  resourceIcon: {fileID: 0}
-  resourceColor: {r: 0.33962262, g: 0.33962262, b: 0.33962262, a: 1}
+  resourceIcon: {fileID: 21300000, guid: e5ef050f65a94e5479df65a8e98adbb4, type: 3}
+  resourceColor: {r: 1, g: 1, b: 1, a: 1}
+  Resource3dItem: {fileID: 4246904120169299878, guid: d8e752849174a0943b80a8c6decbef07,
+    type: 3}

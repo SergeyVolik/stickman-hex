@@ -4,24 +4,18 @@ using Zenject;
 
 namespace Prototype
 {
-    public class PlayerResourceView : MonoBehaviour
+    public class ResourceView : MonoBehaviour
     {
-        private PlayerResources m_Resources;
+        private ResourceContainer m_Resources;
 
         public GameObject m_ResourceUIItemPrefab;
 
         public Dictionary<ResourceTypeSO, PlayerResourceUIItem> uiItems = new Dictionary<ResourceTypeSO, PlayerResourceUIItem>();
 
-        [Inject]
-        public void Construct(PlayerResources resources)
+        public void Bind(ResourceContainer resources)
         {
             m_Resources = resources;
-        }
-
-        private void Start()
-        {
             Setup();
-
             m_Resources.onResourceChanged += UpdateResourceUI;
         }
 
@@ -31,20 +25,29 @@ namespace Prototype
             {
                 item.SetValue(arg2);
             }
+            else
+            {
+                SetupUIItem(arg1, arg2);
+            }
         }
 
         private void Setup()
         {
             foreach (var item in m_Resources.ResourceIterator())
             {
-                var uiItem = GameObject
-                    .Instantiate(m_ResourceUIItemPrefab, transform)
-                    .GetComponent<PlayerResourceUIItem>();
-
-                uiItem.SetValue(item.Value);
-                uiItem.SetSprite(item.Key.resourceIcon, item.Key.resourceColor);
-                uiItems.Add(item.Key, uiItem);
+                SetupUIItem(item.Key, item.Value);
             }
+        }
+
+        private void SetupUIItem(ResourceTypeSO type, int count)
+        {
+            var uiItem = GameObject
+                .Instantiate(m_ResourceUIItemPrefab, transform)
+                .GetComponent<PlayerResourceUIItem>();
+
+            uiItem.SetValue(count);
+            uiItem.SetSprite(type.resourceIcon, type.resourceColor);
+            uiItems.Add(type, uiItem);
         }
     }
 }

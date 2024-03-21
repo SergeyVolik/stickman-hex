@@ -1,7 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
 
 namespace Prototype
@@ -13,7 +11,8 @@ namespace Prototype
         public ResourceTypeSO resourceType;
     }
 
-    public class PlayerResources : MonoBehaviour
+    [System.Serializable]
+    public class ResourceContainer : IEquatable<ResourceContainer>
     {
         public ResourceItem[] InitResources;
 
@@ -21,7 +20,9 @@ namespace Prototype
 
         public IEnumerable<KeyValuePair<ResourceTypeSO, int>> ResourceIterator() => ResourceDic;
 
-        private void Awake()
+        public event Action<ResourceTypeSO, int> onResourceChanged = delegate { };
+
+        public void Init()
         {
             ResourceDic.Clear();
             foreach (ResourceItem item in InitResources)
@@ -36,12 +37,45 @@ namespace Prototype
             onResourceChanged.Invoke(resourceType, count);
         }
 
+        public void AddResource(ResourceTypeSO resourceType, int count)
+        {
+            ResourceDic.TryGetValue(resourceType, out var current);
+            current += count;
+            SetResource(resourceType, current);
+        }
+
+        public void RemoveResource(ResourceTypeSO resourceType, int count)
+        {
+            ResourceDic.TryGetValue(resourceType, out var current);
+            current -= count;
+            SetResource(resourceType, current);
+        }
+
+
+        public bool IsEmpty()
+        {
+            foreach (var item in ResourceIterator())
+            {
+                if (item.Value != 0)
+                    return false;
+            }
+            return true;
+        }
+
         public int GetResource(ResourceTypeSO resourceType)
         {
             ResourceDic.TryGetValue(resourceType, out int result);
             return result;
         }
 
-        public event Action<ResourceTypeSO, int> onResourceChanged = delegate { };
+        public bool Equals(ResourceContainer other)
+        {
+            return false;
+        }
+    }
+
+    public class PlayerResources : MonoBehaviour
+    {
+        public ResourceContainer resources;
     }
 }

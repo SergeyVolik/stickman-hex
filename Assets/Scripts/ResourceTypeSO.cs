@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Prototype
@@ -9,5 +7,6 @@ namespace Prototype
     {
         public Sprite resourceIcon;
         public Color resourceColor;
+        public GameObject Resource3dItem;
     }
 }
