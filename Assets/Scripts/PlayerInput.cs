@@ -34,16 +34,18 @@ namespace Prototype
         {
             var moveInput = m_Input.ReadMoveInput().normalized;
             IsMoving = moveInput != Vector2.zero;
-            if (moveInput == Vector2.zero)
-                return;
+          
+               
 
             var moveVector = new Vector3(moveInput.x, 0, moveInput.y);
 
             var deltaTime = Time.deltaTime;
 
+            if (moveInput != Vector2.zero)
+                m_Transform.rotation = Quaternion.Slerp(m_Transform.rotation, Quaternion.LookRotation(moveVector), rotationSpeed * deltaTime);
 
-            m_Transform.rotation = Quaternion.Slerp(m_Transform.rotation, Quaternion.LookRotation(moveVector), rotationSpeed * deltaTime);
-            m_CharCOntroller.Move(moveVector * deltaTime * moveSpeed);
+            m_CharCOntroller.SimpleMove(moveVector * moveSpeed);
+            //m_CharCOntroller.Move(moveVector * deltaTime * moveSpeed);
         }
     }
 }

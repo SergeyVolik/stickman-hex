@@ -1,3 +1,4 @@
+using Prototype;
 using UnityEngine;
 using Zenject;
 
@@ -23,9 +24,11 @@ public class PlayerInputReader : IInputReader
 public class GameSetup : MonoInstaller
 {
     public Joystick joystick;
+    public PlayerResources playerResources;
     public override void InstallBindings()
     {
 
         Container.Bind<IInputReader>().FromInstance(new PlayerInputReader(joystick));
+        Container.Bind<PlayerResources>().FromInstance(playerResources);
     }
 }
