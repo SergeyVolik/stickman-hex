@@ -31,7 +31,6 @@ public class GameSetup : MonoInstaller
 
         Container.Bind<IInputReader>().FromInstance(new PlayerInputReader(joystick));
         Container.Bind<PlayerResources>().FromInstance(playerResources);
-        playerResources.resources.Init();
         playerResourcesView.Bind(playerResources.resources);
     }
 }

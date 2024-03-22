@@ -10,7 +10,7 @@ namespace Prototype
 
         public GameObject m_ResourceUIItemPrefab;
 
-        public Dictionary<ResourceTypeSO, PlayerResourceUIItem> uiItems = new Dictionary<ResourceTypeSO, PlayerResourceUIItem>();
+        public Dictionary<ResourceTypeSO, ResourceUIItem> uiItems = new Dictionary<ResourceTypeSO, ResourceUIItem>();
 
         public void Bind(ResourceContainer resources)
         {
@@ -43,7 +43,7 @@ namespace Prototype
         {
             var uiItem = GameObject
                 .Instantiate(m_ResourceUIItemPrefab, transform)
-                .GetComponent<PlayerResourceUIItem>();
+                .GetComponent<ResourceUIItem>();
 
             uiItem.SetValue(count);
             uiItem.SetSprite(type.resourceIcon, type.resourceColor);

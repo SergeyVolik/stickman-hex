@@ -78,7 +78,6 @@ namespace Prototype
 
         private void Awake()
         {
-            ResourceToOpen.Init();
             ResourceView.Bind(ResourceToOpen);
             m_Camera = Camera.main;
             ToOpen.SetActive(false);

@@ -14,6 +14,10 @@ namespace Prototype
         private CharacterController m_CharCOntroller;
         public float moveSpeed = 5;
         public float rotationSpeed = 5f;
+        public float maxSlapHeight = 10f;
+        public float accelerationPower = 1f;
+        public float deccelerationPower = 1f;
+        public float gravity;
         public bool IsMoving => moveVector != Vector2.zero;
 
         public Vector2 moveVector;
@@ -30,7 +34,7 @@ namespace Prototype
 
         private void Update()
         {
-            var move3DVector = new Vector3(moveVector.x, 0, moveVector.y);
+            var move3DVector = new Vector3(moveVector.x, gravity, moveVector.y);
 
             var deltaTime = Time.deltaTime;
 

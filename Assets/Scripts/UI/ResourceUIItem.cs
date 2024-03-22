@@ -1,12 +1,9 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Prototype
 {
-    public class PlayerResourceUIItem : MonoBehaviour
+    public class ResourceUIItem : MonoBehaviour
     {
         public TMPro.TextMeshProUGUI itemText;
         public Image spriteImage;
