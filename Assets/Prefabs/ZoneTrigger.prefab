@@ -396,7 +396,7 @@ MonoBehaviour:
   TransferEndPoint: {fileID: 839360453}
   TransferParticle: {fileID: 7941738840105044162}
   transferDuration: 2
-  maxTransferPerType: 7
+  maxTransferPerType: 2
   itmeMoveDelya: 1
   itemMoveDuration: 1
   itemRotAngle: 10

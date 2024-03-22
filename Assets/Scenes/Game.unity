@@ -2643,7 +2643,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}
       propertyPath: ResourceToOpen.InitResources.Array.data[0].count
-      value: 100
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}
       propertyPath: ResourceToOpen.InitResources.Array.data[0].resourceType
