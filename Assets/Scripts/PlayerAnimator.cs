@@ -7,13 +7,13 @@ namespace Prototype
     public class PlayerAnimator : MonoBehaviour
     {
         [SerializeField] private Animator m_Animator;
-        private ICharacterInput m_CharController;
+        private ICharacterController m_CharController;
 
         private static readonly int MoveInputHash = Animator.StringToHash("MoveInput");
 
         private void Awake()
         {
-            m_CharController = GetComponent<ICharacterInput>();
+            m_CharController = GetComponent<ICharacterController>();
         }
 
         private void Update()

@@ -55,14 +55,13 @@ namespace Prototype
         public GameObject ToOpen;
 
         public ResourceContainer ResourceToOpen;
-        public ResourceContainer CurrentResource;
 
         public ResourceView ResourceView;
         private PlayerResources m_PlayerRes;
 
         public Transform ZoneUI;
         public Transform TransferEndPoint;
-
+        public ParticleSystem TransferParticle;
         private Camera m_Camera;
 
         public float transferDuration = 2;
@@ -71,16 +70,18 @@ namespace Prototype
         public float itemMoveDuration = 1f;
         public float itemRotAngle = 90;
         public float maxHeight = 5f;
+        public Ease moveEase;
+        public Ease transferEase;
+        public float dropTickInterval;
 
-        private TweenerCore<float, float, FloatOptions> m_LastTween;
-        private TweenerCore<float, float, FloatOptions> m_LastAnimationTween;
+        private TweenerCore<float, float, FloatOptions> m_TransferTween;
 
         private void Awake()
         {
             ResourceToOpen.Init();
-            CurrentResource.Init();
             ResourceView.Bind(ResourceToOpen);
             m_Camera = Camera.main;
+            ToOpen.SetActive(false);
         }
 
         [Inject]
@@ -92,10 +93,10 @@ namespace Prototype
         public class TransferData
         {
             public float toTransfer;
-            public int lastTransfer;
-            public int lastSpawnValue;
+            public int LastTransferedResources;
+            public int LastTransferedResourcesInAnimationTick;
 
-            public ResourceTypeSO type;
+            public ResourceTypeSO ResourceType;
         }
 
         private void OnTriggerEnter(Collider other)
@@ -107,41 +108,52 @@ namespace Prototype
 
                 List<TransferData> resources = new List<TransferData>();
 
+                bool hasResourceToTransfer = false;
 
                 foreach (var item in ResourceToOpen.ResourceIterator())
                 {
                     var playerResources = m_PlayerRes.resources.GetResource(item.Key);
 
                     var requiredResources = item.Value;
-
+                    var toTransfer = requiredResources;
                     if (playerResources < requiredResources)
                     {
-                        requiredResources = playerResources;
+                        toTransfer = playerResources;
+                    }
+
+                    if (playerResources > 0 && requiredResources != 0)
+                    {
+                        hasResourceToTransfer = true;
                     }
 
                     resources.Add(new TransferData
                     {
-                        lastTransfer = 0,
-                        toTransfer = requiredResources,
-                        type = item.Key
+                        LastTransferedResources = 0,
+                        toTransfer = toTransfer,
+                        ResourceType = item.Key
                     });
+                }
+
+                if (hasResourceToTransfer == false)
+                {
+                    return;
                 }
 
                 float duration = 3;
                 float t = 0;
-
                 var playerRes = m_PlayerRes.resources;
                 float spawnT = 0;
-                float spawnInterval = 0.1f;
+                float spawnInterval = dropTickInterval;
                 int maxSpawn = 4;
 
-                m_LastTween = DOTween.To(() => t, (v) => t = v, 1f, duration).SetEase(Ease.InSine).OnUpdate(() =>
+                m_TransferTween = DOTween.To(() => t, (v) => t = v, 1f, duration).SetEase(transferEase).OnUpdate(() =>
                 {
                     spawnT += Time.deltaTime;
                     bool spawn = false;
                     if (spawnT > spawnInterval)
                     {
                         spawn = true;
+                        spawnT = 0;
                     }
 
                     var startPos = transferFrom.position;
@@ -152,31 +164,32 @@ namespace Prototype
                                    startPos, endPos, gravity, maxHeight);
 
                     float maxRotAngle = 10;
+
                     foreach (var item in resources)
                     {
-                        var items = (int)(t * item.toTransfer);
+                        var resourcesToTransfer = (int)(t * item.toTransfer);
 
-                        ResourceToOpen.AddResource(item.type, item.lastTransfer);
-                        ResourceToOpen.RemoveResource(item.type, items);
-                        playerRes.RemoveResource(item.type, item.lastTransfer);
-                        playerRes.AddResource(item.type, items);
+                        ResourceToOpen.AddResource(item.ResourceType, item.LastTransferedResources);
+                        ResourceToOpen.RemoveResource(item.ResourceType, resourcesToTransfer);
+                        playerRes.AddResource(item.ResourceType, item.LastTransferedResources);
+                        playerRes.RemoveResource(item.ResourceType, resourcesToTransfer);
 
-                        item.lastTransfer = items;
-
+                        item.LastTransferedResources = resourcesToTransfer;
 
                         if (spawn)
                         {
-                            var toSpawn = items - item.lastSpawnValue;
+                            TransferParticle?.Play();
 
-                            if (toSpawn > maxSpawn)
+                            var transferItemsToSpawn = resourcesToTransfer - item.LastTransferedResourcesInAnimationTick;
+
+                            if (transferItemsToSpawn > maxSpawn)
                             {
-                                toSpawn = 1;
+                                transferItemsToSpawn = maxSpawn;
                             }
 
-                            for (int i = 0; i < toSpawn; i++)
+                            for (int i = 0; i < transferItemsToSpawn; i++)
                             {
-
-                                var objIns = GameObject.Instantiate(item.type.Resource3dItem, startPos, UnityEngine.Random.rotation);
+                                var objIns = GameObject.Instantiate(item.ResourceType.Resource3dItem, startPos, UnityEngine.Random.rotation);
                                 var rb = objIns.GetComponent<Rigidbody>();
 
                                 rb.angularVelocity =
@@ -194,18 +207,16 @@ namespace Prototype
                                 rb.velocity = vecNew;
                                 var seuq = DOTween.Sequence();
 
-                                seuq.Insert(itmeMoveDelya, objIns.transform.DOMove(TransferEndPoint.position, itemMoveDuration).SetEase(Ease.InSine).OnComplete(() =>
+                                seuq.Insert(itmeMoveDelya, objIns.transform.DOMove(TransferEndPoint.position, itemMoveDuration).SetEase(moveEase).OnComplete(() =>
                                 {
-                                    rb.velocity = Vector3.zero;
+                                    rb.velocity = Vector3.zero;                                  
                                     GameObject.Destroy(objIns);
                                 }));
-
                             }
 
-                            item.lastSpawnValue = items;
+                            item.LastTransferedResourcesInAnimationTick = resourcesToTransfer;
                         }
                     }
-
                 });
             }
         }
@@ -214,7 +225,7 @@ namespace Prototype
         {
             if (other.GetComponent<PlayerInput>())
             {
-                m_LastTween?.Kill();
+                m_TransferTween?.Kill();
             }
         }
 
@@ -227,6 +238,8 @@ namespace Prototype
             if (finished == true)
             {
                 ToOpen.gameObject.SetActive(true);
+                ToOpen.transform.localScale = Vector3.zero;
+                ToOpen.transform.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutBack);
                 gameObject.SetActive(false);
             }
         }
