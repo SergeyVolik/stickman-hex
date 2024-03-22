@@ -3,8 +3,6 @@ using Zenject;
 
 namespace Prototype
 {
-  
-
     public class PlayerInput : MonoBehaviour
     {
         private IInputReader m_Input;
