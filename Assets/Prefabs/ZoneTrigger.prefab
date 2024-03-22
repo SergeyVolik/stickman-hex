@@ -153,7 +153,6 @@ GameObject:
   - component: {fileID: 1805004523}
   - component: {fileID: 1805004526}
   - component: {fileID: 1805004525}
-  - component: {fileID: 1805004524}
   m_Layer: 0
   m_Name: Canvas
   m_TagString: Untagged
@@ -226,23 +225,6 @@ MonoBehaviour:
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
   m_PresetInfoIsWorld: 1
---- !u!114 &1805004524
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1805004522}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_IgnoreReversedGraphics: 1
-  m_BlockingObjects: 0
-  m_BlockingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
 --- !u!1 &1999506005
 GameObject:
   m_ObjectHideFlags: 0
@@ -390,20 +372,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ToOpen: {fileID: 0}
   ResourceToOpen:
-    InitResources: []
+    m_InitResources: []
   ResourceView: {fileID: 1434577267}
   ZoneUI: {fileID: 1805004523}
   TransferEndPoint: {fileID: 839360453}
   TransferParticle: {fileID: 7941738840105044162}
-  transferDuration: 2
-  maxTransferPerType: 2
-  itmeMoveDelya: 1
+  transferDuration: 1
+  ItemMoveDelay: 1
   itemMoveDuration: 1
   itemRotAngle: 10
-  maxHeight: 3
-  moveEase: 18
-  transferEase: 18
-  dropTickInterval: 0.1
+  itemMaxHeight: 1.5
+  itemVectorAngleOffset: 10
+  itemMoveEase: 3
+  resourceTransferEase: 3
+  maxTransferTicks: 20
 --- !u!1001 &2838184307038212225
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -3,7 +3,7 @@ using Prototype;
 using System;
 using UnityEngine;
 
-public class Prototype_Tests
+public class Prototype_ResourceContainer_Tests
 {
     ResourceTypeSO m_WoodType;
     ResourceTypeSO m_StoneType;

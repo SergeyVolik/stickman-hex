@@ -28,9 +28,13 @@ public class GameSetup : MonoInstaller
     public ResourceView playerResourcesView;
     public override void InstallBindings()
     {
-
         Container.Bind<IInputReader>().FromInstance(new PlayerInputReader(joystick));
         Container.Bind<PlayerResources>().FromInstance(playerResources);
         playerResourcesView.Bind(playerResources.resources);
+
+        foreach (var item in FindObjectsOfType<ZoneTrigger>())
+        {
+            item.Init();
+        } 
     }
 }
