@@ -24,12 +24,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 698159689}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 2.5}
+  m_LocalPosition: {x: 0, y: 0.42, z: 2.22}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1805004523}
-  - {fileID: 839360453}
   m_Father: {fileID: 2838184307397413580}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -57,12 +56,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 839360452}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -2.15, z: 0}
+  m_LocalPosition: {x: -0, y: -2.15, z: 2.5000007}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 698159690}
-  m_RootOrder: 1
+  m_Father: {fileID: 2838184307397413580}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1434577264
 GameObject:
@@ -74,7 +73,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1434577265}
   - component: {fileID: 1434577266}
-  - component: {fileID: 1434577267}
+  - component: {fileID: 3819893216216642491}
   m_Layer: 5
   m_Name: ResourcesUI (1)
   m_TagString: Untagged
@@ -119,7 +118,7 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 2
+  m_ChildAlignment: 4
   m_Spacing: 0
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 0
@@ -128,7 +127,7 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
---- !u!114 &1434577267
+--- !u!114 &3819893216216642491
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -137,7 +136,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1434577264}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8eb2941e751a157489c1b73f869af531, type: 3}
+  m_Script: {fileID: 11500000, guid: 014618cd7b373fb4c9cc209b81c5b31e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_ResourceUIItemPrefab: {fileID: 5197773500834160301, guid: 847ef04cb9a6e7f4a95d722402fc96fd,
@@ -341,6 +340,7 @@ Transform:
   m_Children:
   - {fileID: 1999506006}
   - {fileID: 698159690}
+  - {fileID: 839360453}
   - {fileID: 7941738840105044164}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -371,9 +371,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ToOpen: {fileID: 0}
+  RequiredResources: []
   ResourceToOpen:
     m_InitResources: []
-  ResourceView: {fileID: 1434577267}
+  RequiredResourceView: {fileID: 3819893216216642491}
   ZoneUI: {fileID: 1805004523}
   TransferEndPoint: {fileID: 839360453}
   TransferParticle: {fileID: 7941738840105044162}
@@ -396,7 +397,7 @@ PrefabInstance:
     - target: {fileID: 5284403459737229381, guid: 47f4fc633bc7f0648a6afce3ca2af31d,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5284403459737229381, guid: 47f4fc633bc7f0648a6afce3ca2af31d,
         type: 3}

@@ -7,10 +7,12 @@ namespace Prototype
     {
         public TMPro.TextMeshProUGUI itemText;
         public Image spriteImage;
-        public void SetValue(int value)
+
+        public void SetText(string value)
         {
-            itemText.text = value.ToString();
+            itemText.text = value;
         }
+
         public void SetSprite(Sprite sprite, Color color)
         {
             spriteImage.color = color;

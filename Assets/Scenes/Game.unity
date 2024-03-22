@@ -1622,7 +1622,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}
       propertyPath: ResourceToOpen.m_InitResources.Array.data[0].count
-      value: 12
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}
       propertyPath: ResourceToOpen.InitResources.Array.data[0].resourceType
@@ -2112,7 +2112,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}
       propertyPath: ResourceToOpen.m_InitResources.Array.data[0].count
-      value: 12
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}
       propertyPath: ResourceToOpen.InitResources.Array.data[0].resourceType
@@ -2747,7 +2747,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}
       propertyPath: ResourceToOpen.m_InitResources.Array.data[0].count
-      value: 50
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}
       propertyPath: ResourceToOpen.m_InitResources.Array.data[1].count
@@ -2965,7 +2965,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}
       propertyPath: ResourceToOpen.m_InitResources.Array.data[0].count
-      value: 10
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}
       propertyPath: ResourceToOpen.InitResources.Array.data[0].resourceType

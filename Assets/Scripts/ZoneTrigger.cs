@@ -1,23 +1,22 @@
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
-using System;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Rendering;
 using Zenject;
-using static UnityEditor.Progress;
 
 namespace Prototype
 {
+
     public class ZoneTrigger : MonoBehaviour
     {
         public GameObject ToOpen;
 
+        public ResourceContainer[] RequiredResources;
         public ResourceContainer ResourceToOpen;
-
-        public ResourceView ResourceView;
+        private ResourceContainer m_CurrentResources;
+        public RequiredResourceView RequiredResourceView;
         private PlayerResources m_PlayerRes;
 
         public Transform ZoneUI;
@@ -51,7 +50,6 @@ namespace Prototype
         {
             public float toTransfer;
             public int LastTransferedResources;
-            public int LastTransferedResourcesInAnimationTick;
 
             public ResourceTypeSO ResourceType;
         }
@@ -74,47 +72,51 @@ namespace Prototype
             }
         }
 
-        private void StartTransfer(Transform transferFrom, List<TransferData> resources)
+        private void StartTransfer(Transform transferFrom, List<TransferData> transferList)
         {
-            m_TransferTween = new TweenerCore<float, float, FloatOptions>[resources.Count];
+            m_TransferTween = new TweenerCore<float, float, FloatOptions>[transferList.Count];
             float duration = transferDuration;
             var playerRes = m_PlayerRes.resources;
             int defaultTickNumber = maxTransferTicks;
 
-            for (int i = 0; i < resources.Count; i++)
+            for (int i = 0; i < transferList.Count; i++)
             {
-                float currentTransfer = 0;
-                float spawnT = 0;
-
-                float ticksPerDuration = resources[i].toTransfer < defaultTickNumber ? math.clamp(resources[i].toTransfer, 0, defaultTickNumber) : defaultTickNumber;
-                float spawnInterval = duration / ticksPerDuration;
-                var resourceItem = resources[i];
-                float tweenDestination = resources[i].toTransfer;
+                float currentTransfer = 1;
+                float ticksPerDuration = transferList[i].toTransfer < defaultTickNumber ? math.clamp(transferList[i].toTransfer, 0, defaultTickNumber) : defaultTickNumber;
+                float spawnInterval = duration / (ticksPerDuration == 1 ? 1f : (ticksPerDuration - 1));
+                TransferData resourceItem = transferList[i];
+                float tweenDestination = transferList[i].toTransfer;
                 bool isFinished = false;
+                float spawnT = spawnInterval;
+                bool executeSpawn = currentTransfer == transferList[i].toTransfer;
 
                 var trensferTween = DOTween.To(() => currentTransfer, (v) => currentTransfer = v, tweenDestination, duration)
                     .SetEase(resourceTransferEase).OnUpdate(() =>
-                    {
-                        spawnT += Time.deltaTime;
-                        bool executeSpawn = false;
-
+                    {                      
                         if (spawnT > spawnInterval)
                         {
                             executeSpawn = true;
                             spawnT = 0;
                         }
 
+                        spawnT += Time.deltaTime;
+
                         if (executeSpawn == false)
                             return;
 
+                        if (isFinished)
+                            return;
+
                         ExecuteSpawn(transferFrom, playerRes, currentTransfer, resourceItem, tweenDestination, out isFinished);
+
+                        executeSpawn = false;
                     })
                     .OnComplete(() =>
                     {
-                        if (!isFinished)
-                        {
-                            ExecuteSpawn(transferFrom, playerRes, currentTransfer, resourceItem, tweenDestination, out isFinished);
-                        }
+                        if (isFinished)
+                            return;
+
+                        ExecuteSpawn(transferFrom, playerRes, currentTransfer, resourceItem, tweenDestination, out isFinished);
                     });
 
                 m_TransferTween[i] = trensferTween;
@@ -138,10 +140,9 @@ namespace Prototype
             int resourcesToTransfer = (int)currentTransfer;
             playerRes.AddResource(item.ResourceType, item.LastTransferedResources);
             playerRes.RemoveResource(item.ResourceType, resourcesToTransfer);
-            var toAddRes = item.LastTransferedResources;
+            var toRemove = item.LastTransferedResources;
 
             item.LastTransferedResources = resourcesToTransfer;
-            resourceItem.LastTransferedResourcesInAnimationTick = resourcesToTransfer;
             var objIns = GameObject.Instantiate(item.ResourceType.Resource3dItem, startPos, UnityEngine.Random.rotation);
 
             var rb = objIns.GetComponent<Rigidbody>();
@@ -162,8 +163,8 @@ namespace Prototype
 
             seuq.Insert(ItemMoveDelay, objIns.transform.DOMove(TransferEndPoint.position, itemMoveDuration).SetEase(itemMoveEase).OnComplete(() =>
             {
-                ResourceToOpen.AddResource(item.ResourceType, toAddRes);
-                ResourceToOpen.RemoveResource(item.ResourceType, resourcesToTransfer);
+                m_CurrentResources.AddResource(item.ResourceType, resourcesToTransfer);
+                m_CurrentResources.RemoveResource(item.ResourceType, toRemove);             
 
                 rb.velocity = Vector3.zero;
                 GameObject.Destroy(objIns);
@@ -177,9 +178,9 @@ namespace Prototype
             foreach (var item in ResourceToOpen.ResourceIterator())
             {
                 var playerResources = m_PlayerRes.resources.GetResource(item.Key);
-
+                var alreadyTransfered = m_CurrentResources.GetResource(item.Key);
                 var requiredResources = item.Value;
-                var toTransfer = requiredResources;
+                var toTransfer = requiredResources - alreadyTransfered;
                 if (playerResources < requiredResources)
                 {
                     toTransfer = playerResources;
@@ -217,7 +218,7 @@ namespace Prototype
         {
             ZoneUI.forward = m_Camera.transform.forward;
 
-            bool finished = ResourceToOpen.IsEmpty();
+            bool finished = ResourceToOpen.Equals(m_CurrentResources);
 
             if (finished == true)
             {
@@ -234,8 +235,11 @@ namespace Prototype
             if (m_Inted)
                 return;
 
+            m_CurrentResources = new ResourceContainer();
+
             m_Inted = true;
-            ResourceView.Bind(ResourceToOpen);
+            RequiredResourceView.Bind(ResourceToOpen, m_CurrentResources);
+
             m_Camera = Camera.main;
             ToOpen.SetActive(false);
         }

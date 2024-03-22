@@ -6,14 +6,20 @@ using UnityEngine.Assertions;
 namespace Prototype
 {
     [System.Serializable]
-    public class ResourceItem
+    public class ResourceItem : IEquatable<ResourceItem>
     {
         public int count;
         public ResourceTypeSO resourceType;
+
+        public bool Equals(ResourceItem other)
+        {
+            return count == other.count && resourceType == other.resourceType;
+        }
     }
 
+
     [System.Serializable]
-    public class ResourceContainer
+    public class ResourceContainer : IEquatable<ResourceContainer>
     {
         [SerializeField]
         private ResourceItem[] m_InitResources;
@@ -65,9 +71,8 @@ namespace Prototype
 
         public void RemoveResource(ResourceTypeSO resourceType, int count)
         {
-            var hasResource = ResourceDic.TryGetValue(resourceType, out var current);
+            ResourceDic.TryGetValue(resourceType, out var current);
 
-            Assert.IsTrue(hasResource, "Can't remove resource.");
             Assert.IsTrue(current >= count, $"Can't Remove resource {count} > {current}");
 
             current -= count;
@@ -94,6 +99,26 @@ namespace Prototype
         {
             m_ResourceDic.TryGetValue(resourceType, out int result);
             return result;
+        }
+
+        public bool Equals(ResourceContainer other)
+        {
+            if (other.ResourceDic.Count != ResourceDic.Count)
+                return false;
+
+            int equalItems = 0;
+
+
+            foreach (var item in ResourceDic)
+            {
+               var count = other.GetResource(item.Key);
+
+                if(count == item.Value)
+                    equalItems++;
+            }
+
+
+            return equalItems == ResourceDic.Count;
         }
     }
 }
