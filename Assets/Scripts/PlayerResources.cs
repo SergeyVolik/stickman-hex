@@ -1,11 +1,11 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-
 namespace Prototype
 {
-    public class PlayerResources : MonoBehaviour
+    public class PlayerResources
     {
+        public PlayerResources(ResourceContainer _resources)
+        {
+            this.resources = _resources;
+        }
         public ResourceContainer resources;
     }
 }
