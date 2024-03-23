@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace CubeRunner
+namespace Prototype
 {
     public class GameObjectPool
     {
