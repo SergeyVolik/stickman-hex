@@ -4,18 +4,19 @@ using DG.Tweening.Plugins.Options;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Zenject;
 
 namespace Prototype
-{
-
+{    
     public class ZoneTrigger : MonoBehaviour
     {
-        public GameObject ToOpen;
-
-        public ResourceContainer[] RequiredResources;
+        [FormerlySerializedAs("ToOpen")]
+        public GameObject NextLocation;
         public ResourceContainer ResourceToOpen;
-        private ResourceContainer m_CurrentResources;
+        private ResourceContainer m_CurrentDelayedResources;
+        private ResourceContainer m_CurrentRealResources;
+
         public RequiredResourceView RequiredResourceView;
         private PlayerResources m_PlayerRes;
 
@@ -33,6 +34,7 @@ namespace Prototype
         public Ease itemMoveEase;
         public Ease resourceTransferEase;
         public int maxTransferTicks = 30;
+
         private TweenerCore<float, float, FloatOptions>[] m_TransferTween;
 
         private void Awake()
@@ -164,10 +166,13 @@ namespace Prototype
             rb.velocity = velocityWithOffset;
             var seuq = DOTween.Sequence();
 
+            m_CurrentRealResources.AddResource(item.ResourceType, resourcesToTransfer);
+            m_CurrentRealResources.RemoveResource(item.ResourceType, toRemove);
+            
             seuq.Insert(ItemMoveDelay, objIns.transform.DOMove(TransferEndPoint.position, itemMoveDuration).SetEase(itemMoveEase).OnComplete(() =>
             {
-                m_CurrentResources.AddResource(item.ResourceType, resourcesToTransfer);
-                m_CurrentResources.RemoveResource(item.ResourceType, toRemove);             
+                m_CurrentDelayedResources.AddResource(item.ResourceType, resourcesToTransfer);
+                m_CurrentDelayedResources.RemoveResource(item.ResourceType, toRemove);             
 
                 rb.velocity = Vector3.zero;
                 objIns.GetComponent<PoolObject>().Release();
@@ -181,7 +186,7 @@ namespace Prototype
             foreach (var item in ResourceToOpen.ResourceIterator())
             {
                 var playerResources = m_PlayerRes.resources.GetResource(item.Key);
-                var alreadyTransfered = m_CurrentResources.GetResource(item.Key);
+                var alreadyTransfered = m_CurrentRealResources.GetResource(item.Key);
                 var requiredResources = item.Value;
                 var toTransfer = requiredResources - alreadyTransfered;
                 if (playerResources < requiredResources)
@@ -189,7 +194,7 @@ namespace Prototype
                     toTransfer = playerResources;
                 }
 
-                if (playerResources > 0 && requiredResources != 0)
+                if (playerResources > 0 && toTransfer != 0)
                 {
                     transferData.Add(new TransferData
                     {
@@ -221,13 +226,13 @@ namespace Prototype
         {
             ZoneUI.forward = m_Camera.transform.forward;
 
-            bool finished = ResourceToOpen.Equals(m_CurrentResources);
+            bool finished = ResourceToOpen.Equals(m_CurrentDelayedResources);
 
             if (finished == true)
             {
-                ToOpen.gameObject.SetActive(true);
-                ToOpen.transform.localScale = Vector3.zero;
-                ToOpen.transform.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutBack);
+                NextLocation.gameObject.SetActive(true);
+                NextLocation.transform.localScale = Vector3.zero;
+                NextLocation.transform.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutBack);
                 gameObject.SetActive(false);
             }
         }
@@ -238,13 +243,14 @@ namespace Prototype
             if (m_Inted)
                 return;
 
-            m_CurrentResources = new ResourceContainer();
+            m_CurrentDelayedResources = new ResourceContainer();
+            m_CurrentRealResources = new ResourceContainer();
 
             m_Inted = true;
-            RequiredResourceView.Bind(ResourceToOpen, m_CurrentResources);
+            RequiredResourceView.Bind(ResourceToOpen, m_CurrentDelayedResources);
 
             m_Camera = Camera.main;
-            ToOpen.SetActive(false);
+            NextLocation.SetActive(false);
         }
     }
 }

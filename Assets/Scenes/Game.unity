@@ -178,7 +178,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 112359894}
-  m_LocalRotation: {x: 0.49647754, y: 0.000000014389837, z: -0.00000000823021, w: 0.8680496}
+  m_LocalRotation: {x: 0.4964775, y: -0.000000039313726, z: 0.00000002248533, w: 0.8680496}
   m_LocalPosition: {x: 0, y: 17, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -384,6 +384,10 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}
       propertyPath: ToOpen
+      value: 
+      objectReference: {fileID: 402904109}
+    - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}
+      propertyPath: NextLocation
       value: 
       objectReference: {fileID: 402904109}
     - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}
@@ -796,6 +800,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 533886354}
     - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}
+      propertyPath: NextLocation
+      value: 
+      objectReference: {fileID: 533886354}
+    - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}
       propertyPath: ResourceToOpen.InitResources.Array.size
       value: 1
       objectReference: {fileID: 0}
@@ -892,6 +900,10 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}
       propertyPath: ToOpen
+      value: 
+      objectReference: {fileID: 1290285841}
+    - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}
+      propertyPath: NextLocation
       value: 
       objectReference: {fileID: 1290285841}
     - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}
@@ -1801,6 +1813,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 522438781}
     - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}
+      propertyPath: NextLocation
+      value: 
+      objectReference: {fileID: 522438781}
+    - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}
       propertyPath: ResourceToOpen.InitResources.Array.size
       value: 1
       objectReference: {fileID: 0}
@@ -2160,7 +2176,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0.49647754, y: 0.000000014389837, z: -0.00000000823021, w: 0.8680496}
+  m_LocalRotation: {x: 0.4964775, y: -0.000000039313726, z: 0.00000002248533, w: 0.8680496}
   m_LocalPosition: {x: 0, y: 17, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2338,6 +2354,10 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}
       propertyPath: ToOpen
+      value: 
+      objectReference: {fileID: 1759394437}
+    - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}
+      propertyPath: NextLocation
       value: 
       objectReference: {fileID: 1759394437}
     - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}
@@ -3172,6 +3192,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1556563257}
     - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}
+      propertyPath: NextLocation
+      value: 
+      objectReference: {fileID: 1556563257}
+    - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}
       propertyPath: ResourceToOpen.InitResources.Array.size
       value: 2
       objectReference: {fileID: 0}
@@ -3392,6 +3416,10 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}
       propertyPath: ToOpen
+      value: 
+      objectReference: {fileID: 1350032942}
+    - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}
+      propertyPath: NextLocation
       value: 
       objectReference: {fileID: 1350032942}
     - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}
@@ -4173,6 +4201,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 408693036}
     - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}
+      propertyPath: NextLocation
+      value: 
+      objectReference: {fileID: 408693036}
+    - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}
       propertyPath: ResourceToOpen.InitResources.Array.size
       value: 1
       objectReference: {fileID: 0}
@@ -4498,6 +4530,10 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}
       propertyPath: ToOpen
+      value: 
+      objectReference: {fileID: 1630782837}
+    - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}
+      propertyPath: NextLocation
       value: 
       objectReference: {fileID: 1630782837}
     - target: {fileID: 1322714803, guid: 08d8bd02cbc83c1498f068c0edd61fe3, type: 3}

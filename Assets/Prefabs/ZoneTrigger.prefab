@@ -452,7 +452,7 @@ PrefabInstance:
     - target: {fileID: 5284403459737229382, guid: 47f4fc633bc7f0648a6afce3ca2af31d,
         type: 3}
       propertyPath: m_Name
-      value: SpendResource
+      value: SpendResourcePaleticle
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 47f4fc633bc7f0648a6afce3ca2af31d, type: 3}
