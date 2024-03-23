@@ -35,13 +35,14 @@ namespace Prototype
         {
             var Thousand = numberOfIntems / 1000f;
 
-            if (Thousand > 1)
+            if (Thousand >= 1)
             {
                 return $"{Thousand.ToString("0.0")}K";
             }
 
             return numberOfIntems.ToString();
         }
+
         private void Setup()
         {
             foreach (var item in m_RequiredResources.ResourceIterator())
@@ -55,6 +56,7 @@ namespace Prototype
             var uiItem = GameObject
                 .Instantiate(m_ResourceUIItemPrefab, transform)
                 .GetComponent<ResourceUIItem>();
+
             uiItems.Add(type, uiItem);
             uiItem.SetSprite(type.resourceIcon, type.resourceColor);
             UpdateResourceUI(type, count);

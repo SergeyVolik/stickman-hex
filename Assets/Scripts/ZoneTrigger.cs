@@ -11,6 +11,14 @@ namespace Prototype
 {    
     public class ZoneTrigger : MonoBehaviour
     {
+        public class TransferData
+        {
+            public float toTransfer;
+            public int LastTransferedResources;
+
+            public ResourceTypeSO ResourceType;
+        }
+
         [FormerlySerializedAs("ToOpen")]
         public GameObject NextLocation;
         public ResourceContainer ResourceToOpen;
@@ -37,23 +45,31 @@ namespace Prototype
 
         private TweenerCore<float, float, FloatOptions>[] m_TransferTween;
 
-        private void Awake()
-        {
-            Init();
-        }
-
         [Inject]
         void Construct(PlayerResources resources)
         {
             m_PlayerRes = resources;
         }
 
-        public class TransferData
+        private void Awake()
         {
-            public float toTransfer;
-            public int LastTransferedResources;
+            Init();
+        }
 
-            public ResourceTypeSO ResourceType;
+        bool m_Inted = false;
+        public void Init()
+        {
+            if (m_Inted)
+                return;
+
+            m_CurrentDelayedResources = new ResourceContainer();
+            m_CurrentRealResources = new ResourceContainer();
+
+            m_Inted = true;
+            RequiredResourceView.Bind(ResourceToOpen, m_CurrentDelayedResources);
+
+            m_Camera = Camera.main;
+            NextLocation.SetActive(false);
         }
 
         private void OnTriggerEnter(Collider other)
@@ -73,26 +89,56 @@ namespace Prototype
                 StartTransfer(transferFrom, resources);
             }
         }
+        private void OnTriggerExit(Collider other)
+        {
+            if (other.GetComponent<PlayerInput>())
+            {
+                if (m_TransferTween != null)
+                {
+                    foreach (var item in m_TransferTween)
+                    {
+                        item?.Kill();
+                    }
+                }
+            }
+        }
+
+        private void Update()
+        {
+            ZoneUI.forward = m_Camera.transform.forward;
+
+            bool finished = ResourceToOpen.Equals(m_CurrentDelayedResources);
+
+            if (finished == true)
+            {
+                NextLocation.gameObject.SetActive(true);
+                NextLocation.transform.localScale = Vector3.zero;
+                NextLocation.transform.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutBack);
+                gameObject.SetActive(false);
+            }
+        }
 
         private void StartTransfer(Transform transferFrom, List<TransferData> transferList)
         {
             m_TransferTween = new TweenerCore<float, float, FloatOptions>[transferList.Count];
+
             float duration = transferDuration;
             var playerRes = m_PlayerRes.resources;
             int defaultTickNumber = maxTransferTicks;
 
+            //start transfer for each required resource
             for (int i = 0; i < transferList.Count; i++)
             {
-                float currentTransfer = 1;
-                float ticksPerDuration = transferList[i].toTransfer < defaultTickNumber ? math.clamp(transferList[i].toTransfer, 0, defaultTickNumber) : defaultTickNumber;
-                float spawnInterval = duration / (ticksPerDuration == 1 ? 1f : (ticksPerDuration - 1));
+                float lastTransferCount = 1;
+                float spawnTicksPerTransfer = transferList[i].toTransfer < defaultTickNumber ? math.clamp(transferList[i].toTransfer, 0, defaultTickNumber) : defaultTickNumber;
+                float spawnInterval = duration / (spawnTicksPerTransfer == 1 ? 1f : (spawnTicksPerTransfer - 1));
                 TransferData resourceItem = transferList[i];
                 float tweenDestination = transferList[i].toTransfer;
                 bool isFinished = false;
                 float spawnT = spawnInterval;
-                bool executeSpawn = currentTransfer == transferList[i].toTransfer;
+                bool executeSpawn = lastTransferCount == transferList[i].toTransfer;
 
-                var trensferTween = DOTween.To(() => currentTransfer, (v) => currentTransfer = v, tweenDestination, duration)
+                var trensferTween = DOTween.To(() => lastTransferCount, (newTransferCount) => lastTransferCount = newTransferCount, tweenDestination, duration)
                     .SetEase(resourceTransferEase).OnUpdate(() =>
                     {                      
                         if (spawnT > spawnInterval)
@@ -109,7 +155,7 @@ namespace Prototype
                         if (isFinished)
                             return;
 
-                        ExecuteSpawn(transferFrom, playerRes, currentTransfer, resourceItem, tweenDestination, out isFinished);
+                        ExecuteSpawn(transferFrom, playerRes, lastTransferCount, resourceItem, tweenDestination, out isFinished);
 
                         executeSpawn = false;
                     })
@@ -118,7 +164,7 @@ namespace Prototype
                         if (isFinished)
                             return;
 
-                        ExecuteSpawn(transferFrom, playerRes, currentTransfer, resourceItem, tweenDestination, out isFinished);
+                        ExecuteSpawn(transferFrom, playerRes, lastTransferCount, resourceItem, tweenDestination, out isFinished);
                     });
 
                 m_TransferTween[i] = trensferTween;
@@ -127,55 +173,62 @@ namespace Prototype
 
         private void ExecuteSpawn(Transform transferFrom, ResourceContainer playerRes, float currentTransfer, TransferData resourceItem, float tweenDestination, out bool isFinished)
         {
-            var startPos = transferFrom.position;
-            var endPos = TransferEndPoint.position;
-            var gravity = Physics.gravity.y;
+            Vector3 startPos = transferFrom.position;
+            Vector3 endPos = TransferEndPoint.position;
+            float gravity = Physics.gravity.y;
             float maxRotAngle = itemVectorAngleOffset;
-            var predictedVel = MathExt.GetPredictedVelocity(
+
+            //calculate velocity for gravity movement
+            LaunchData predictedVel = MathExt.GetPredictedVelocity(
                            startPos, endPos, gravity, itemMaxHeight);
 
             isFinished = currentTransfer == tweenDestination;
 
             TransferParticle?.Play();
-
-            var item = resourceItem;
+          
             int resourcesToTransfer = (int)currentTransfer;
-            playerRes.AddResource(item.ResourceType, item.LastTransferedResources);
-            playerRes.RemoveResource(item.ResourceType, resourcesToTransfer);
-            var toRemove = item.LastTransferedResources;
+            playerRes.AddResource(resourceItem.ResourceType, resourceItem.LastTransferedResources);
+            playerRes.RemoveResource(resourceItem.ResourceType, resourcesToTransfer);
+            var toRemove = resourceItem.LastTransferedResources;
 
-            item.LastTransferedResources = resourcesToTransfer;
-            var objIns = GameObjectPool.GetPoolObject(item.ResourceType.Resource3dItem);
-            objIns.SetActive(true);
-            objIns.transform.position = startPos;
-            objIns.transform.rotation = UnityEngine.Random.rotation;
+            resourceItem.LastTransferedResources = resourcesToTransfer;
+
+            var resourceObjectInstance = GameObjectPool.GetPoolObject(resourceItem.ResourceType.Resource3dItem);
+
+            resourceObjectInstance.SetActive(true);
+            resourceObjectInstance.transform.position = startPos;
+            resourceObjectInstance.transform.rotation = UnityEngine.Random.rotation;
            
-            var rb = objIns.GetComponent<Rigidbody>();
+            var rb = resourceObjectInstance.GetComponent<Rigidbody>();
 
-            rb.angularVelocity =
-            new Vector3(
+
+            rb.angularVelocity = new Vector3(
                 UnityEngine.Random.Range(-itemRotAngle, itemRotAngle),
                 UnityEngine.Random.Range(-itemRotAngle, itemRotAngle),
                 UnityEngine.Random.Range(-itemRotAngle, itemRotAngle));
 
+            //rotate RigidBody vector by angles
             var angle1 = quaternion.AxisAngle(math.forward(), UnityEngine.Random.Range(math.radians(-maxRotAngle), math.radians(maxRotAngle)));
             var angle2 = quaternion.AxisAngle(math.right(), UnityEngine.Random.Range(math.radians(-maxRotAngle), math.radians(maxRotAngle)));
-
             var velocityWithOffset = math.mul(angle1, math.mul(angle2, predictedVel.initialVelocity));
 
             rb.velocity = velocityWithOffset;
             var seuq = DOTween.Sequence();
 
-            m_CurrentRealResources.AddResource(item.ResourceType, resourcesToTransfer);
-            m_CurrentRealResources.RemoveResource(item.ResourceType, toRemove);
+            m_CurrentRealResources.AddResource(resourceItem.ResourceType, resourcesToTransfer);
+            m_CurrentRealResources.RemoveResource(resourceItem.ResourceType, toRemove);
             
-            seuq.Insert(ItemMoveDelay, objIns.transform.DOMove(TransferEndPoint.position, itemMoveDuration).SetEase(itemMoveEase).OnComplete(() =>
+            //delayed move to end position
+            seuq.Insert(ItemMoveDelay, resourceObjectInstance.transform
+                .DOMove(TransferEndPoint.position, itemMoveDuration)
+                .SetEase(itemMoveEase)
+                .OnComplete(() =>
             {
-                m_CurrentDelayedResources.AddResource(item.ResourceType, resourcesToTransfer);
-                m_CurrentDelayedResources.RemoveResource(item.ResourceType, toRemove);             
+                m_CurrentDelayedResources.AddResource(resourceItem.ResourceType, resourcesToTransfer);
+                m_CurrentDelayedResources.RemoveResource(resourceItem.ResourceType, toRemove);             
 
                 rb.velocity = Vector3.zero;
-                objIns.GetComponent<PoolObject>().Release();
+                resourceObjectInstance.GetComponent<PoolObject>().Release();
             }));
         }
 
@@ -206,51 +259,6 @@ namespace Prototype
             }
 
             return transferData;
-        }
-
-        private void OnTriggerExit(Collider other)
-        {
-            if (other.GetComponent<PlayerInput>())
-            {
-                if (m_TransferTween != null)
-                {
-                    foreach (var item in m_TransferTween)
-                    {
-                        item?.Kill();
-                    }
-                }
-            }
-        }
-
-        private void Update()
-        {
-            ZoneUI.forward = m_Camera.transform.forward;
-
-            bool finished = ResourceToOpen.Equals(m_CurrentDelayedResources);
-
-            if (finished == true)
-            {
-                NextLocation.gameObject.SetActive(true);
-                NextLocation.transform.localScale = Vector3.zero;
-                NextLocation.transform.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutBack);
-                gameObject.SetActive(false);
-            }
-        }
-
-        bool m_Inted = false;
-        public void Init()
-        {
-            if (m_Inted)
-                return;
-
-            m_CurrentDelayedResources = new ResourceContainer();
-            m_CurrentRealResources = new ResourceContainer();
-
-            m_Inted = true;
-            RequiredResourceView.Bind(ResourceToOpen, m_CurrentDelayedResources);
-
-            m_Camera = Camera.main;
-            NextLocation.SetActive(false);
         }
     }
 }
