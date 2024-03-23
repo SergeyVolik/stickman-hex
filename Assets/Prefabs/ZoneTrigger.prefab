@@ -75,7 +75,7 @@ GameObject:
   - component: {fileID: 1434577266}
   - component: {fileID: 3819893216216642491}
   m_Layer: 5
-  m_Name: ResourcesUI (1)
+  m_Name: RequiredResourcesUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -139,7 +139,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 014618cd7b373fb4c9cc209b81c5b31e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ResourceUIItemPrefab: {fileID: 5197773500834160301, guid: 847ef04cb9a6e7f4a95d722402fc96fd,
+  m_ResourceUIItemPrefab: {fileID: 5197773500834160301, guid: 02d6e4c183f0f134e85c02f6d69cfc03,
     type: 3}
 --- !u!1 &1805004522
 GameObject:

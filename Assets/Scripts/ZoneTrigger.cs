@@ -1,3 +1,4 @@
+using CubeRunner;
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
@@ -143,8 +144,11 @@ namespace Prototype
             var toRemove = item.LastTransferedResources;
 
             item.LastTransferedResources = resourcesToTransfer;
-            var objIns = GameObject.Instantiate(item.ResourceType.Resource3dItem, startPos, UnityEngine.Random.rotation);
-
+            var objIns = GameObjectPool.GetPoolObject(item.ResourceType.Resource3dItem);
+            objIns.SetActive(true);
+            objIns.transform.position = startPos;
+            objIns.transform.rotation = UnityEngine.Random.rotation;
+           
             var rb = objIns.GetComponent<Rigidbody>();
 
             rb.angularVelocity =
@@ -167,7 +171,7 @@ namespace Prototype
                 m_CurrentResources.RemoveResource(item.ResourceType, toRemove);             
 
                 rb.velocity = Vector3.zero;
-                GameObject.Destroy(objIns);
+                objIns.GetComponent<PoolObject>().Release();
             }));
         }
 

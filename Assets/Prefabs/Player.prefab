@@ -159,10 +159,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 2.5
   rotationSpeed: 20
-  maxSlapHeight: 10
-  accelerationPower: 1
-  deccelerationPower: 1
-  gravity: 0
+  acceleration: 1000
+  deceleration: 9
   moveVector: {x: 0, y: 0}
 --- !u!114 &1537403925597983324
 MonoBehaviour:
