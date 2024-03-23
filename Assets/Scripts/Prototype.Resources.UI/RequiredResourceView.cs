@@ -26,11 +26,22 @@ namespace Prototype
         {
             uiItems.TryGetValue(arg1, out var item);
 
-            var req = m_RequiredResources.GetResource(arg1);
-            var current = m_CurrentResources.GetResource(arg1);
+            var req = GetStringValue(m_RequiredResources.GetResource(arg1));
+            var current = GetStringValue(m_CurrentResources.GetResource(arg1));
             item.SetText($"<size=100%>{current}<size=50%>/{req}");
         }
 
+        private string GetStringValue(int numberOfIntems)
+        {
+            var Thousand = numberOfIntems / 1000f;
+
+            if (Thousand > 1)
+            {
+                return $"{Thousand.ToString("0.0")}K";
+            }
+
+            return numberOfIntems.ToString();
+        }
         private void Setup()
         {
             foreach (var item in m_RequiredResources.ResourceIterator())
