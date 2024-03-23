@@ -74,7 +74,7 @@ namespace Prototype
 
         private void OnTriggerEnter(Collider other)
         {
-            var player = other.GetComponent<PlayerInput>();
+            var player = other.GetComponent<PlayerCharacterInput>();
             if (player)
             {
                 var transferFrom = player.GetComponent<UnitCenter>().Center;
@@ -91,7 +91,7 @@ namespace Prototype
         }
         private void OnTriggerExit(Collider other)
         {
-            if (other.GetComponent<PlayerInput>())
+            if (other.GetComponent<PlayerCharacterInput>())
             {
                 if (m_TransferTween != null)
                 {

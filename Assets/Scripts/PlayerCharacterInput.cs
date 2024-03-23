@@ -3,7 +3,7 @@ using Zenject;
 
 namespace Prototype
 {
-    public class PlayerInput : MonoBehaviour
+    public class PlayerCharacterInput : MonoBehaviour
     {
         private IInputReader m_Input;
         private CustomCharacterController m_CharController;

@@ -101,6 +101,18 @@ namespace Prototype
             return result;
         }
 
+        public ResourceContainer DeepClone()
+        {
+            var container = new ResourceContainer();
+
+            foreach (var item in m_ResourceDic)
+            {
+                container.SetResource(item.Key, item.Value);
+            }
+
+            return container;
+        }
+
         public bool Equals(ResourceContainer other)
         {
             if (other.ResourceDic.Count != ResourceDic.Count)
