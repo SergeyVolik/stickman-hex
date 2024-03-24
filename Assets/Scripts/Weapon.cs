@@ -75,7 +75,7 @@ namespace Prototype
             {
                 if (farmable.RequiredWeapon == Type)
                 {
-                    other.GetComponent<HealthData>().DoDamage(damage, gameObject);
+                    other.GetComponent<IDamageable>().DoDamage(damage, gameObject);
                 }
             }
         }

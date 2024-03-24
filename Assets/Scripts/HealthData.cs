@@ -26,10 +26,25 @@ namespace Prototype
         public bool IsDead { get; }
     }
 
-    public class HealthData : MonoBehaviour, IResurrectable, IKillable
+    public interface IHealthData
     {
-        public int maxHealth = 10;
-     
+        public int MaxHealth { get; set; }
+        public int CurrentHealth { get; set; }
+    }
+
+    public interface IDamageable
+    {
+        public void DoDamage(int damage, GameObject source);
+    }
+
+    public interface IHealable
+    {
+        public void DoHeal(int heal, GameObject source);
+    }
+
+    public class HealthData : MonoBehaviour, IResurrectable, IKillable, IDamageable, IHealable
+    {
+        public int maxHealth = 10;   
         public int currentHealth = 10;
 
         public event Action<HealthChangeData> onHealthChanged = delegate { };
