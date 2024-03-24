@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7062716019281163421}
   - component: {fileID: 3052649895966819385}
   - component: {fileID: 155359121806028041}
+  - component: {fileID: 8110817377537838954}
   m_Layer: 3
   m_Name: FarmableObject
   m_TagString: Untagged
@@ -79,3 +80,16 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 2, z: 1}
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &8110817377537838954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7325258845627080027}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab99e79b5a6c12743b2df289ed7659d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  resurrectionDuration: 3

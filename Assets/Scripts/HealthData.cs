@@ -12,10 +12,23 @@ namespace Prototype
         public bool IsDamage => CurrentValue < PrevValue;
     }
 
-    public class HealthData : MonoBehaviour
+    public interface IResurrectable
+    {
+        public event Action onResurrected;
+        public bool IsDead { get; }
+        public void Resurrect();
+    }
+
+    public interface IKillable
+    {
+        public event Action onDeath;
+        public void Kill();
+        public bool IsDead { get; }
+    }
+
+    public class HealthData : MonoBehaviour, IResurrectable, IKillable
     {
         public int maxHealth = 10;
-
      
         public int currentHealth = 10;
 
@@ -67,6 +80,11 @@ namespace Prototype
         public void DoDamage(int damage, GameObject source)
         {
             ChangeHealth(-damage, source);
+        }
+
+        public void Kill()
+        {
+            ChangeHealth(0, null);
         }
     }
 }

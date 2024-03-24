@@ -1,5 +1,4 @@
 using DG.Tweening;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Zenject;
@@ -39,7 +38,14 @@ namespace Prototype
 
             m_Health.onHealthChanged += M_Health_onHealthChaged;
             m_Health.onDeath += M_Health_onDeath;
+            m_Health.onResurrected += M_Health_onResurrected;
             m_Transform = transform;
+        }
+
+        private void M_Health_onResurrected()
+        {
+            m_Transform.localScale = new Vector3(1, 0, 1);
+            m_Transform.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutSine);
         }
 
         private void M_Health_onDeath()
