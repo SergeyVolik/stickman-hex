@@ -11,10 +11,13 @@ namespace Prototype
         Crutch
     }
 
-    public class Weapon : MonoBehaviour
+    public class Weapon : MonoBehaviour, IOwnable
     {
         public WeaponType Type;
-        public GameObject Owner;
+
+        [field: SerializeField]
+        public GameObject Owner { get; set; }
+
         public int damage;
         public TrailRenderer Trail;
         private Collider m_HitBox;
@@ -23,13 +26,13 @@ namespace Prototype
 
         private TweenerCore<Vector3, Vector3, VectorOptions> m_DeactivateTween;
 
+      
+
         private void Awake()
         {
             m_Transform = transform;
             m_HitBox = GetComponent<Collider>();
-            m_DeactivateTween = m_Transform.DOScale(Vector3.zero, 0.2f).OnComplete(() => {
-                ActivateTrail(false);
-            });
+           
             ActivateTrail(false);
             m_DeactivateTween.Pause();
         }
@@ -47,13 +50,15 @@ namespace Prototype
 
         public void HideWeapon()
         {
-            m_DeactivateTween.Restart();           
+            ActivateTrail(false);
+            m_DeactivateTween = m_Transform.DOScale(Vector3.zero, 0.2f).OnComplete(() => {
+                ActivateTrail(false);
+            }).SetDelay(1f);
         }
 
         public void ShowWeapon()
         {
-            m_DeactivateTween.Restart();
-            m_DeactivateTween.Pause();
+            m_DeactivateTween?.Kill();
 
             float activateDuration = 0.2f;
             m_Transform.DOScale(Vector3.one, activateDuration).SetEase(Ease.InSine).OnComplete(() => {
@@ -70,7 +75,7 @@ namespace Prototype
             {
                 if (farmable.RequiredWeapon == Type)
                 {
-                    other.GetComponent<HealthData>().RemoveHealth(damage);
+                    other.GetComponent<HealthData>().DoDamage(damage, gameObject);
                 }
             }
         }

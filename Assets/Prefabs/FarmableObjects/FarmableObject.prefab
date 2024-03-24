@@ -46,8 +46,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c0b2180a8dafa4b9eae244b1021013, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 6
-  m_CurrentHealth: 6
+  maxHealth: 10
+  currentHealth: 10
 --- !u!114 &3052649895966819385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62,6 +62,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_RequiredWeapon: 0
   Parts: []
+  MessagePrefab: {fileID: 7992831679333375622, guid: e3f3042afd3e879458c1e9b8535296e0,
+    type: 3}
   m_StartResource:
     m_InitResources: []
 --- !u!65 &155359121806028041

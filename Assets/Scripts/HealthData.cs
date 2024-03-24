@@ -4,58 +4,69 @@ using UnityEngine;
 
 namespace Prototype
 {
-    public struct HealthChangeData
+    public class HealthChangeData
     {
         public int PrevValue;
         public int CurrentValue;
+        public GameObject Source;
+        public bool IsDamage => CurrentValue < PrevValue;
     }
 
     public class HealthData : MonoBehaviour
     {
         public int maxHealth = 10;
 
-        [SerializeField]
-        private int m_CurrentHealth = 10;
+     
+        public int currentHealth = 10;
 
-        public int CurrentHealth
-        {
-            get { return m_CurrentHealth; }
-            set
-            {
-                var prev = m_CurrentHealth;
-                m_CurrentHealth = math.clamp(value, 0, maxHealth);
-
-                if (m_CurrentHealth != prev)
-                {
-                    onHealthChanged.Invoke(new HealthChangeData
-                    {
-                        CurrentValue = m_CurrentHealth,
-                        PrevValue = prev
-                    });
-                }
-
-                if (m_CurrentHealth == 0 && prev != 0)
-                {
-                    onDeath.Invoke();
-                }
-            }
-        }
         public event Action<HealthChangeData> onHealthChanged = delegate { };
         public event Action onDeath = delegate { };
-        public bool IsDead => m_CurrentHealth == 0;
+        public event Action onResurrected = delegate { };
+
+        public bool IsDead => currentHealth == 0;
 
         public bool HasMaxHealth()
         {
-            return m_CurrentHealth == maxHealth;
-        }
-        public void AddHealth(int toAdd)
-        {
-            CurrentHealth = m_CurrentHealth + toAdd;
+            return currentHealth == maxHealth;
         }
 
-        public void RemoveHealth(int toRemove)
+        public void Resurrect()
         {
-            CurrentHealth = m_CurrentHealth - toRemove;
+            DoHeal(maxHealth, null);
+            onResurrected.Invoke();
+        }
+
+        public void DoHeal(int heal, GameObject source)
+        {
+            ChangeHealth(heal, source);
+        }
+
+        private void ChangeHealth(int value, GameObject source)
+        {
+            var prev = currentHealth;
+            currentHealth = currentHealth + value;
+
+            currentHealth = math.clamp(currentHealth, 0, maxHealth);
+
+            if (currentHealth != prev)
+            {
+                onHealthChanged.Invoke(new HealthChangeData
+                {
+                    CurrentValue = currentHealth,
+                    PrevValue = prev,
+                    Source = source
+                });
+            }
+
+            if (currentHealth == 0 && prev != 0)
+            {
+                onDeath.Invoke();
+            }
+        }
+
+        public void DoDamage(int damage, GameObject source)
+        {
+            ChangeHealth(-damage, source);
         }
     }
 }

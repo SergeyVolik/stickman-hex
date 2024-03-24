@@ -20,7 +20,8 @@ public class AttackBehaviour : MonoBehaviour
         m_Transform = transform;
         foreach (Weapon weapon in weapons)
         {
-            weapon.transform.localScale = Vector3.zero;         
+            weapon.transform.localScale = Vector3.zero;
+            weapon.Owner = gameObject;
         }
 
         m_CastedColliders = new Collider[20];
@@ -43,8 +44,9 @@ public class AttackBehaviour : MonoBehaviour
     }
 
     private void M_CharAnimator_onEndAttack()
-    {
-        m_CurrentWeapon.ActivateTrail(false);
+    {        
+        m_CurrentWeapon.HideWeapon();
+        IsAttacking = false;
     }
 
     private void M_CharAnimator_onBeginAttack()
@@ -81,13 +83,14 @@ public class AttackBehaviour : MonoBehaviour
             m_AttackableLayer);
 
         Debug.Log(count);
-
+   
         for (int i = 0; i < count; i++)
         {
             var collider = m_CastedColliders[i];
 
             if (collider.TryGetComponent<FarmableObject>(out var farmableObj))
             {
+                IsAttacking = true;
                 m_CurrentWeapon = GetWeaponByType(farmableObj.RequiredWeapon);
                 m_CharAnimator.Attack();
             }

@@ -115,7 +115,12 @@ PrefabInstance:
     - target: {fileID: 3052649895966819385, guid: 1f6cdd123875b1849959cc8cc43dfe10,
         type: 3}
       propertyPath: Parts.Array.size
-      value: 6
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3052649895966819385, guid: 1f6cdd123875b1849959cc8cc43dfe10,
+        type: 3}
+      propertyPath: m_RequiredWeapon
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3052649895966819385, guid: 1f6cdd123875b1849959cc8cc43dfe10,
         type: 3}
@@ -147,6 +152,22 @@ PrefabInstance:
       propertyPath: Parts.Array.data[5]
       value: 
       objectReference: {fileID: 6609154133576663206}
+    - target: {fileID: 3052649895966819385, guid: 1f6cdd123875b1849959cc8cc43dfe10,
+        type: 3}
+      propertyPath: m_StartResource.m_InitResources.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3052649895966819385, guid: 1f6cdd123875b1849959cc8cc43dfe10,
+        type: 3}
+      propertyPath: m_StartResource.m_InitResources.Array.data[0].count
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 3052649895966819385, guid: 1f6cdd123875b1849959cc8cc43dfe10,
+        type: 3}
+      propertyPath: m_StartResource.m_InitResources.Array.data[0].resourceType
+      value: 
+      objectReference: {fileID: 11400000, guid: 23cc17bff32fb7f4f8ad5e221744ff3f,
+        type: 2}
     - target: {fileID: 7325258845627080027, guid: 1f6cdd123875b1849959cc8cc43dfe10,
         type: 3}
       propertyPath: m_Name
