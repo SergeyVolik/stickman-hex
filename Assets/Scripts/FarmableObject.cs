@@ -1,5 +1,7 @@
 using DG.Tweening;
+using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.UIElements;
 using Zenject;
 
 namespace Prototype
@@ -21,6 +23,13 @@ namespace Prototype
         private HealthData m_Health;
         private Collider m_Collider;
         private Transform m_Transform;
+        private TransferMoveManager m_TransManager;
+
+        [Inject]
+        void Construct(TransferMoveManager transManager)
+        {
+            m_TransManager = transManager;
+        }
 
         private void Awake()
         {
@@ -45,8 +54,8 @@ namespace Prototype
 
             m_Collider.enabled = !m_Health.IsDead;
 
-            m_Transform.DOShakeScale(0.1f);
-
+            //m_Transform.DOShakeScale(0.1f, new Vector3(0, 1, 0));
+            m_Transform.DOPunchScale(new Vector3(0, -0.3f, 0), 0.15f);
             if (obj.Source != null && obj.IsDamage)
             {
                 var holderObj = obj.Source;
@@ -93,13 +102,32 @@ namespace Prototype
 
         private bool TryAddResource(GameObject holderObj)
         {
+            float itemSpeed = 7f;
+
             if (holderObj.TryGetComponent<IResourceHolder>(out var holder))
             {
                 foreach (var item in m_StartResource.ResourceIterator())
                 {
-                    holder.Resources.AddResource(item.Key, item.Value);
+                    var resourceType = item.Key;
+                    holder.Resources.AddResource(resourceType, item.Value);
                     var instance = GameObjectPool.GetPoolObject(MessagePrefab);
                     instance.Show(m_Transform.position, $"+{item.Value}", item.Key.resourceIcon);
+
+                    for (int i = 0; i < 3; i++)
+                    {
+                        var resourceObjectInstance = GameObjectPool.GetPoolObject(resourceType.Resource3dItem);
+                        resourceObjectInstance.transform.position = m_Transform.position;
+                        resourceObjectInstance.SetActive(true);
+
+                        var rb = resourceObjectInstance.GetComponent<Rigidbody>();
+
+                        var initialVelocity = Vector3.up * itemSpeed;
+
+                        m_TransManager.Transfer3dObject(rb, m_Transform.position, initialVelocity, holder.CenterPoint, onComplete: () =>
+                        {
+                            rb.GetComponent<PoolObject>().Release();
+                        });
+                    }
                 }
 
                 return true;

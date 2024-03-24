@@ -74,7 +74,6 @@ GameObject:
   - component: {fileID: 1537403925597983319}
   - component: {fileID: 1537403925597983321}
   - component: {fileID: 1537403925597983323}
-  - component: {fileID: 1537403925597983324}
   - component: {fileID: 2276074369430891959}
   - component: {fileID: 511061691969334445}
   m_Layer: 0
@@ -151,19 +150,6 @@ MonoBehaviour:
   acceleration: 1000
   deceleration: 9
   moveVector: {x: 0, y: 0}
---- !u!114 &1537403925597983324
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1945973267793662044}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5cc43f24324356d4bb464bce65f2a531, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Center: {fileID: 411982059}
 --- !u!114 &2276074369430891959
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -196,8 +182,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44ba432cdd695b74e8c666ded3732e14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Resources:
-    m_InitResources: []
+  <CenterPoint>k__BackingField: {fileID: 411982059}
 --- !u!1 &2548134925459087026
 GameObject:
   m_ObjectHideFlags: 0

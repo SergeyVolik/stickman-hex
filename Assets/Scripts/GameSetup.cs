@@ -27,6 +27,8 @@ public class GameSetup : MonoInstaller
     public Joystick joystick;
     public ResourceView playerResourcesView;
     public CameraController cameraController;
+    public TransferMoveManager transferManager;
+
     public GameObject playerPrefab;
 
     public override void InstallBindings()
@@ -38,6 +40,7 @@ public class GameSetup : MonoInstaller
         Container.Bind<PlayerResources>().FromInstance(pResources);
         Container.Bind<PlayerSpawnFactory>().FromInstance(playerFactory);
         Container.Bind<CameraController>().FromInstance(cameraController);
+        Container.Bind<TransferMoveManager>().FromInstance(transferManager);
 
         playerResourcesView.Bind(pResources.resources);
 

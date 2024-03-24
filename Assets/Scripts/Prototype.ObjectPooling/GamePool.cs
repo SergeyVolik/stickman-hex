@@ -119,7 +119,6 @@ namespace Prototype
 
         public void Release()
         {
-            isReleased = true;
             poolRef.Release(gameObject);
         }
     }

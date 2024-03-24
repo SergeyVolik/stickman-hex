@@ -1,6 +1,7 @@
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
+using System;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
@@ -8,7 +9,7 @@ using UnityEngine.Serialization;
 using Zenject;
 
 namespace Prototype
-{    
+{
     public class ZoneTrigger : MonoBehaviour
     {
         public class TransferData
@@ -27,7 +28,7 @@ namespace Prototype
 
         public RequiredResourceView RequiredResourceView;
         private PlayerResources m_PlayerRes;
-
+        private TransferMoveManager m_TransManager;
         public Transform ZoneUI;
         public Transform TransferEndPoint;
         public ParticleSystem TransferParticle;
@@ -46,9 +47,10 @@ namespace Prototype
         private TweenerCore<float, float, FloatOptions>[] m_TransferTween;
 
         [Inject]
-        void Construct(PlayerResources resources)
+        void Construct(PlayerResources resources, TransferMoveManager transManager)
         {
             m_PlayerRes = resources;
+            m_TransManager = transManager;
         }
 
         private void Awake()
@@ -77,7 +79,7 @@ namespace Prototype
             var player = other.GetComponent<PlayerCharacterInput>();
             if (player)
             {
-                var transferFrom = player.GetComponent<UnitCenter>().Center;
+                var transferFrom = player.GetComponent<IResourceHolder>().CenterPoint;
 
                 List<TransferData> resources = SetupTransferData();
 
@@ -140,7 +142,7 @@ namespace Prototype
 
                 var trensferTween = DOTween.To(() => lastTransferCount, (newTransferCount) => lastTransferCount = newTransferCount, tweenDestination, duration)
                     .SetEase(resourceTransferEase).OnUpdate(() =>
-                    {                      
+                    {
                         if (spawnT > spawnInterval)
                         {
                             executeSpawn = true;
@@ -185,51 +187,32 @@ namespace Prototype
             isFinished = currentTransfer == tweenDestination;
 
             TransferParticle?.Play();
-          
+
             int resourcesToTransfer = (int)currentTransfer;
             playerRes.AddResource(resourceItem.ResourceType, resourceItem.LastTransferedResources);
             playerRes.RemoveResource(resourceItem.ResourceType, resourcesToTransfer);
             var toRemove = resourceItem.LastTransferedResources;
 
             resourceItem.LastTransferedResources = resourcesToTransfer;
+            m_CurrentRealResources.AddResource(resourceItem.ResourceType, resourcesToTransfer);
+            m_CurrentRealResources.RemoveResource(resourceItem.ResourceType, toRemove);
 
             var resourceObjectInstance = GameObjectPool.GetPoolObject(resourceItem.ResourceType.Resource3dItem);
 
             resourceObjectInstance.SetActive(true);
             resourceObjectInstance.transform.position = startPos;
             resourceObjectInstance.transform.rotation = UnityEngine.Random.rotation;
-           
+
             var rb = resourceObjectInstance.GetComponent<Rigidbody>();
 
-
-            rb.angularVelocity = new Vector3(
-                UnityEngine.Random.Range(-itemRotAngle, itemRotAngle),
-                UnityEngine.Random.Range(-itemRotAngle, itemRotAngle),
-                UnityEngine.Random.Range(-itemRotAngle, itemRotAngle));
-
-            //rotate RigidBody vector by angles
-            var angle1 = quaternion.AxisAngle(math.forward(), UnityEngine.Random.Range(math.radians(-maxRotAngle), math.radians(maxRotAngle)));
-            var angle2 = quaternion.AxisAngle(math.right(), UnityEngine.Random.Range(math.radians(-maxRotAngle), math.radians(maxRotAngle)));
-            var velocityWithOffset = math.mul(angle1, math.mul(angle2, predictedVel.initialVelocity));
-
-            rb.velocity = velocityWithOffset;
-            var seuq = DOTween.Sequence();
-
-            m_CurrentRealResources.AddResource(resourceItem.ResourceType, resourcesToTransfer);
-            m_CurrentRealResources.RemoveResource(resourceItem.ResourceType, toRemove);
-            
-            //delayed move to end position
-            seuq.Insert(ItemMoveDelay, resourceObjectInstance.transform
-                .DOMove(TransferEndPoint.position, itemMoveDuration)
-                .SetEase(itemMoveEase)
-                .OnComplete(() =>
+            m_TransManager.Transfer3dObject(rb, startPos, predictedVel.initialVelocity, TransferEndPoint, onComplete: () =>
             {
                 m_CurrentDelayedResources.AddResource(resourceItem.ResourceType, resourcesToTransfer);
-                m_CurrentDelayedResources.RemoveResource(resourceItem.ResourceType, toRemove);             
+                m_CurrentDelayedResources.RemoveResource(resourceItem.ResourceType, toRemove);
 
                 rb.velocity = Vector3.zero;
                 resourceObjectInstance.GetComponent<PoolObject>().Release();
-            }));
+            });
         }
 
         private List<TransferData> SetupTransferData()

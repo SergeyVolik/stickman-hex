@@ -81,8 +81,6 @@ public class AttackBehaviour : MonoBehaviour
             m_CastedColliders,
             castTrans.rotation,
             m_AttackableLayer);
-
-        Debug.Log(count);
    
         for (int i = 0; i < count; i++)
         {
