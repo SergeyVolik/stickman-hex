@@ -370,15 +370,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10e3c60b5a8fa2d4b812b4d557d230f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ToOpen: {fileID: 0}
-  RequiredResources: []
+  NextLocation: {fileID: 0}
   ResourceToOpen:
     m_InitResources: []
   RequiredResourceView: {fileID: 3819893216216642491}
   ZoneUI: {fileID: 1805004523}
   TransferEndPoint: {fileID: 839360453}
   TransferParticle: {fileID: 7941738840105044162}
-  transferDuration: 1
+  tickInterval: 0.1
   ItemMoveDelay: 1
   itemMoveDuration: 1
   itemRotAngle: 10

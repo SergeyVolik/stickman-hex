@@ -34,7 +34,7 @@ namespace Prototype
         public ParticleSystem TransferParticle;
         private Camera m_Camera;
 
-        public float transferDuration = 2;
+        public float tickInterval = 0.05f;
         public float ItemMoveDelay = 1f;
         public float itemMoveDuration = 1f;
         public float itemRotAngle = 90;
@@ -124,7 +124,7 @@ namespace Prototype
         {
             m_TransferTween = new TweenerCore<float, float, FloatOptions>[transferList.Count];
 
-            float duration = transferDuration;
+            float tickInterval = this.tickInterval;
             var playerRes = m_PlayerRes.resources;
             int defaultTickNumber = maxTransferTicks;
 
@@ -132,18 +132,17 @@ namespace Prototype
             for (int i = 0; i < transferList.Count; i++)
             {
                 float lastTransferCount = 1;
-                float spawnTicksPerTransfer = transferList[i].toTransfer < defaultTickNumber ? math.clamp(transferList[i].toTransfer, 0, defaultTickNumber) : defaultTickNumber;
-                float spawnInterval = duration / (spawnTicksPerTransfer == 1 ? 1f : (spawnTicksPerTransfer - 1));
+                float spawnTicksPerTransfer = math.clamp(transferList[i].toTransfer, 0, defaultTickNumber);             
                 TransferData resourceItem = transferList[i];
                 float tweenDestination = transferList[i].toTransfer;
                 bool isFinished = false;
-                float spawnT = spawnInterval;
+                float spawnT = tickInterval;
                 bool executeSpawn = lastTransferCount == transferList[i].toTransfer;
-
+                float duration = spawnTicksPerTransfer * tickInterval;
                 var trensferTween = DOTween.To(() => lastTransferCount, (newTransferCount) => lastTransferCount = newTransferCount, tweenDestination, duration)
                     .SetEase(resourceTransferEase).OnUpdate(() =>
                     {
-                        if (spawnT > spawnInterval)
+                        if (spawnT > tickInterval)
                         {
                             executeSpawn = true;
                             spawnT = 0;
