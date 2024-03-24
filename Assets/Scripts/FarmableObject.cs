@@ -2,6 +2,8 @@ using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Zenject;
+using CandyCoded.HapticFeedback;
+using Unity.Mathematics;
 
 namespace Prototype
 {
@@ -11,13 +13,16 @@ namespace Prototype
         [SerializeField]
         private WeaponType m_RequiredWeapon;
 
+        [SerializeField]
+        private ParticleSystem m_HitParticle;
+
         public WeaponType RequiredWeapon => m_RequiredWeapon;
 
         public GameObject[] Parts;
         public WorldSpaceMessage MessagePrefab;
         [SerializeField]
         private ResourceContainer m_StartResource;
-        private ResourceContainer m_CurrentResource;
+        private ResourceContainer m_ArlreadyDroppedResources;
 
         private HealthData m_Health;
         private Collider m_Collider;
@@ -34,7 +39,7 @@ namespace Prototype
         {
             m_Health = GetComponent<HealthData>();
             m_Collider = GetComponent<Collider>();
-            m_CurrentResource = m_StartResource.DeepClone();
+            m_ArlreadyDroppedResources = new ResourceContainer();
 
             m_Health.onHealthChanged += M_Health_onHealthChaged;
             m_Health.onDeath += M_Health_onDeath;
@@ -46,6 +51,7 @@ namespace Prototype
         {
             m_Transform.localScale = new Vector3(1, 0, 1);
             m_Transform.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutSine);
+            m_ArlreadyDroppedResources.Clear();
         }
 
         private void M_Health_onDeath()
@@ -64,6 +70,11 @@ namespace Prototype
             m_Transform.DOPunchScale(new Vector3(0, -0.3f, 0), 0.15f);
             if (obj.Source != null && obj.IsDamage)
             {
+                if (m_HitParticle != null)
+                {
+                    m_HitParticle.Play();
+                }
+
                 var holderObj = obj.Source;
 
                 if (!TryAddResource(holderObj) && holderObj.TryGetComponent<IOwnable>(out var owner))
@@ -108,18 +119,36 @@ namespace Prototype
 
         private bool TryAddResource(GameObject holderObj)
         {
-            float itemSpeed = 7f;
-
             if (holderObj.TryGetComponent<IResourceHolder>(out var holder))
             {
+                var currentHealthPercent = m_Health.currentHealth / (float)m_Health.maxHealth;
+
+                float itemSpeed = 7f;
+
+                const int maxFropItems = 10;
+
                 foreach (var item in m_StartResource.ResourceIterator())
                 {
-                    var resourceType = item.Key;
-                    holder.Resources.AddResource(resourceType, item.Value);
-                    var instance = GameObjectPool.GetPoolObject(MessagePrefab);
-                    instance.Show(m_Transform.position, $"+{item.Value}", item.Key.resourceIcon);
+                    ResourceTypeSO resourceType = item.Key;
+                    int resourceCount = item.Value;
 
-                    for (int i = 0; i < 3; i++)
+                    int healthDiffToDrop = resourceCount - Mathf.RoundToInt(resourceCount * currentHealthPercent);
+
+                    var alreadyDropped = m_ArlreadyDroppedResources.GetResource(resourceType);
+                    int toDrop = healthDiffToDrop - alreadyDropped;
+
+                    if (toDrop == 0)
+                        continue;
+
+                    m_ArlreadyDroppedResources.SetResource(resourceType, healthDiffToDrop);
+                    holder.Resources.AddResource(resourceType, toDrop);
+
+                    var worldMessageInst = GameObjectPool.GetPoolObject(MessagePrefab);
+                    worldMessageInst.Show(m_Transform.position, $"+{toDrop}", item.Key.resourceIcon);
+
+                    int transferVisualCount = math.clamp(toDrop, 0, maxFropItems);
+
+                    for (int i = 0; i < transferVisualCount; i++)
                     {
                         var resourceObjectInstance = GameObjectPool.GetPoolObject(resourceType.Resource3dItem);
                         resourceObjectInstance.transform.position = m_Transform.position;
@@ -129,7 +158,8 @@ namespace Prototype
 
                         var initialVelocity = Vector3.up * itemSpeed;
 
-                        m_TransManager.Transfer3dObject(rb, m_Transform.position, initialVelocity, holder.CenterPoint, onComplete: () =>
+                        m_TransManager.Transfer3dObject(rb, m_Transform.position, initialVelocity, holder.CenterPoint, moveDuration: 0.7f,
+                            onComplete: () =>
                         {
                             rb.GetComponent<PoolObject>().Release();
                         });
@@ -137,6 +167,11 @@ namespace Prototype
                 }
 
                 return true;
+            }
+
+            if (holderObj.GetComponent<PlayerCharacterInput>())
+            {
+                HapticFeedback.LightFeedback();
             }
 
             return false;
