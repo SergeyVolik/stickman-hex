@@ -18,5 +18,9 @@ namespace Prototype
             spriteImage.color = color;
             spriteImage.sprite = sprite;
         }
+        public void SetSprite(Sprite sprite)
+        {
+            spriteImage.sprite = sprite;
+        }
     }
 }

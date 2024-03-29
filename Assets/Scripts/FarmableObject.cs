@@ -159,7 +159,7 @@ namespace Prototype
             {
                 var currentHealthPercent = m_Health.currentHealth / (float)m_Health.maxHealth;
 
-                float itemSpeed = 7f;
+                const float itemSpeed = 7f;
 
                 const int maxFropItems = 10;
 

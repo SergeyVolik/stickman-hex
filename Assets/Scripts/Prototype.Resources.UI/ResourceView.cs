@@ -23,7 +23,7 @@ namespace Prototype
         {
             if (uiItems.TryGetValue(arg1, out var item))
             {
-                item.SetText(arg2.ToString());
+                item.SetText(TextUtils.IntToText(arg2));
             }
             else
             {
@@ -45,7 +45,8 @@ namespace Prototype
                 .Instantiate(m_ResourceUIItemPrefab, transform)
                 .GetComponent<ResourceUIItem>();
 
-            uiItem.SetText(count.ToString());
+            uiItem.SetText(TextUtils.IntToText(count));
+
             uiItem.SetSprite(type.resourceIcon, type.resourceColor);
             uiItems.Add(type, uiItem);
         }

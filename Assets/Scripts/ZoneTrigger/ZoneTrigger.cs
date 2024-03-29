@@ -99,7 +99,6 @@ namespace Prototype
 
         private void OnEnable()
         {
-            Debug.Log("EnableZone");
             m_worldToScreenHandle = m_worldToScreen.Register(new WordlToScreenItem
             {
                 item = m_ZoneUiInstance.GetComponent<RectTransform>(),
@@ -116,7 +115,6 @@ namespace Prototype
 
         private void OnDisable()
         {
-            Debug.Log("DisableZone");
             m_worldToScreen.Unregister(m_worldToScreenHandle);
             m_actByDist.Unregister(m_ActivateByDistanceHandle);
         }

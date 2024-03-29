@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22dfce7983eb81544aeeb94dd55e3716, type: 3}
   m_Name: Lumber Resource Type
   m_EditorClassIdentifier: 
-  resourceIcon: {fileID: 21300000, guid: ac227ca9e5cdf044ba4addf64f02848c, type: 3}
+  resourceIcon: {fileID: 21300000, guid: ee8ac9c8824ed3a41a3e5bf7ea63ba36, type: 3}
   resourceColor: {r: 1, g: 1, b: 1, a: 1}
   Resource3dItem: {fileID: 4246904120169299878, guid: d9a2372d3ec039e41870a74397b787f7,
     type: 3}
