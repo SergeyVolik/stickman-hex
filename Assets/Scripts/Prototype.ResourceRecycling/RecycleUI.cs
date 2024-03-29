@@ -12,12 +12,9 @@ public class RecycleUI : ActivatableUI
     public ResourceUIItem destionationResourceUI;
     public float m_ViewInitValue;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         m_ViewInitValue = m_SliderView.value;
-    }
-    public void Construct()
-    {
-        
     }
 }

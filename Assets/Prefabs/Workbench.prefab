@@ -80,11 +80,16 @@ MonoBehaviour:
   sourceResource: {fileID: 11400000, guid: 8f488db5fe418c049ab012a9e34028f6, type: 2}
   destinationResource: {fileID: 11400000, guid: 26e1535583bce394f94648f1814d5fe5,
     type: 2}
-  itemsToDestResource: 10
+  itemsToDestResource: 2
   m_UIPrefab: {fileID: 5055512166671350808, guid: 1000900477368374b8d81e3e3f7de478,
     type: 3}
+  m_UIRecycleViewUiPrefab: {fileID: 1292509043, guid: fcac1216cf4d7d4429b99c493829afce,
+    type: 3}
   m_UiBindPoint: {fileID: 848979075}
-  distanceToActivateUI: 2
+  distanceToActivateUI: 3
+  recycleItemDuration: 1
+  itemToRecycle: 0
+  recycleT: 0
 --- !u!1001 &5461455999443744858
 PrefabInstance:
   m_ObjectHideFlags: 0

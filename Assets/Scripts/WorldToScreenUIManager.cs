@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WordlToScreenItem
+public class WordlToScreenUIItem
 {
     public RectTransform item;
     public Transform worldPositionTransform;
 }
 public class WorldToScreenUIManager : MonoBehaviour
 {
-    private List<WordlToScreenItem> m_Items = new List<WordlToScreenItem>(10);
+    private List<WordlToScreenUIItem> m_Items = new List<WordlToScreenUIItem>(10);
 
     [SerializeField]
     public RectTransform m_Root;
@@ -22,13 +22,13 @@ public class WorldToScreenUIManager : MonoBehaviour
         m_Camera = Camera.main;
     }
 
-    public WordlToScreenItem Register(WordlToScreenItem item)
+    public WordlToScreenUIItem Register(WordlToScreenUIItem item)
     {
         m_Items.Add(item);
         return item;
     }
 
-    public void Unregister(WordlToScreenItem item)
+    public void Unregister(WordlToScreenUIItem item)
     {
         m_Items.Remove(item);
     }

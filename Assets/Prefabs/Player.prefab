@@ -148,7 +148,7 @@ MonoBehaviour:
   moveSpeed: 2.5
   rotationSpeed: 20
   acceleration: 1000
-  deceleration: 9
+  deceleration: 5
   moveVector: {x: 0, y: 0}
 --- !u!114 &2276074369430891959
 MonoBehaviour:

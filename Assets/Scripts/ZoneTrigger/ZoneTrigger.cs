@@ -52,7 +52,7 @@ namespace Prototype
 
         bool m_Inted = false;
         private ZoneTriggerUI m_ZoneUiInstance;
-        private WordlToScreenItem m_worldToScreenHandle;
+        private WordlToScreenUIItem m_worldToScreenHandle;
         private ActivateableByDistance m_ActivateByDistanceHandle;
 
         [Inject]
@@ -99,7 +99,7 @@ namespace Prototype
 
         private void OnEnable()
         {
-            m_worldToScreenHandle = m_worldToScreen.Register(new WordlToScreenItem
+            m_worldToScreenHandle = m_worldToScreen.Register(new WordlToScreenUIItem
             {
                 item = m_ZoneUiInstance.GetComponent<RectTransform>(),
                 worldPositionTransform = ZoneUI

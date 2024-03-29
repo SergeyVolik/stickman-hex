@@ -59,7 +59,6 @@ namespace Prototype
             m_Health.onHealthChanged += M_Health_onHealthChaged;
             m_Health.onDeath += M_Health_onDeath;
             m_Health.onResurrected += M_Health_onResurrected;
-
         }
 
         private void M_Health_onResurrected()
