@@ -26,10 +26,14 @@ namespace Prototype
         private ResourceContainer m_CurrentDelayedResources;
         private ResourceContainer m_CurrentRealResources;
 
-        public RequiredResourceView RequiredResourceView;
+        public ZoneTriggerUI ZoneUIPrefab;
+        public Transform ZoneUI;
+
         private PlayerResources m_PlayerRes;
         private TransferMoveManager m_TransManager;
-        public Transform ZoneUI;
+        private WorldToScreenUIManager m_worldToScreen;
+        private ActivateByDistanceToPlayerManager m_actByDist;
+
         public Transform TransferEndPoint;
         public ParticleSystem TransferParticle;
         private Camera m_Camera;
@@ -46,19 +50,31 @@ namespace Prototype
 
         private TweenerCore<float, float, FloatOptions>[] m_TransferTween;
 
+        bool m_Inted = false;
+        private ZoneTriggerUI m_ZoneUiInstance;
+        private WordlToScreenItem m_worldToScreenHandle;
+        private ActivateableByDistance m_ActivateByDistanceHandle;
+
         [Inject]
-        void Construct(PlayerResources resources, TransferMoveManager transManager)
+        void Construct(
+            PlayerResources resources,
+            TransferMoveManager transManager,
+            WorldToScreenUIManager worldToScreen,
+            ActivateByDistanceToPlayerManager actByDist)
         {
             m_PlayerRes = resources;
             m_TransManager = transManager;
+            m_worldToScreen = worldToScreen;
+            m_actByDist = actByDist;
         }
 
         private void Awake()
         {
             Init();
-        }
 
-        bool m_Inted = false;
+            m_ZoneUiInstance = GameObject.Instantiate(ZoneUIPrefab, m_worldToScreen.Root);
+            m_ZoneUiInstance.resourceView.Bind(ResourceToOpen, m_CurrentDelayedResources);
+        }
 
         public void Init()
         {
@@ -69,7 +85,6 @@ namespace Prototype
             m_CurrentRealResources = new ResourceContainer();
 
             m_Inted = true;
-            RequiredResourceView.Bind(ResourceToOpen, m_CurrentDelayedResources);
 
             m_Camera = Camera.main;
 
@@ -79,12 +94,37 @@ namespace Prototype
                 {
                     item.SetActive(false);
                 }
-            }           
+            }
+        }
+
+        private void OnEnable()
+        {
+            Debug.Log("EnableZone");
+            m_worldToScreenHandle = m_worldToScreen.Register(new WordlToScreenItem
+            {
+                item = m_ZoneUiInstance.GetComponent<RectTransform>(),
+                worldPositionTransform = ZoneUI
+            });
+
+            m_ActivateByDistanceHandle = m_actByDist.Register(new ActivateableByDistance
+            {
+                DistanceObj = ZoneUI,
+                DistanceToActivate = 4,
+                ItemToActivate = m_ZoneUiInstance
+            });
+        }
+
+        private void OnDisable()
+        {
+            Debug.Log("DisableZone");
+            m_worldToScreen.Unregister(m_worldToScreenHandle);
+            m_actByDist.Unregister(m_ActivateByDistanceHandle);
         }
 
         private void OnTriggerEnter(Collider other)
         {
             var player = other.GetComponent<PlayerCharacterInput>();
+
             if (player)
             {
                 var transferFrom = player.GetComponent<IResourceHolder>().CenterPoint;
@@ -99,6 +139,7 @@ namespace Prototype
                 StartTransfer(transferFrom, resources);
             }
         }
+
         private void OnTriggerExit(Collider other)
         {
             if (other.GetComponent<PlayerCharacterInput>())
@@ -131,8 +172,14 @@ namespace Prototype
                     locations.gameObject.SetActive(true);
                     locations.transform.localScale = Vector3.zero;
                     locations.transform.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutBack);
+                  
+                }
+
+                transform.DOScale(0, 0.5f).OnComplete(() => {
                     gameObject.SetActive(false);
-                }               
+                });
+
+                m_ZoneUiInstance.transform.DOScale(0, 0.5f);
             }
         }
 
@@ -148,7 +195,7 @@ namespace Prototype
             for (int i = 0; i < transferList.Count; i++)
             {
                 float lastTransferCount = 1;
-                float spawnTicksPerTransfer = math.clamp(transferList[i].toTransfer, 0, defaultTickNumber);             
+                float spawnTicksPerTransfer = math.clamp(transferList[i].toTransfer, 0, defaultTickNumber);
                 TransferData resourceItem = transferList[i];
                 float tweenDestination = transferList[i].toTransfer;
                 bool isFinished = false;

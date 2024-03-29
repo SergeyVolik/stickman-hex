@@ -10,11 +10,11 @@ public class CameraController : MonoBehaviour
     public float lookAheadSpeed;
     public float lookAheadOffset;
 
-    private PlayerSpawnFactory m_PlayerFactory;
+    private IPlayerFactory m_PlayerFactory;
     private CinemachineComposer m_Composer;
 
     [Inject]
-    public void Construct(PlayerSpawnFactory factory)
+    public void Construct(IPlayerFactory factory)
     {
         m_PlayerFactory = factory;
         m_Composer = m_VirtualCamera.GetCinemachineComponent<CinemachineComposer>();

@@ -28,6 +28,8 @@ public class GameSetup : MonoInstaller
     public ResourceView playerResourcesView;
     public CameraController cameraController;
     public TransferMoveManager transferManager;
+    public ActivateByDistanceToPlayerManager activateByDistance;
+    public WorldToScreenUIManager worldToScreenUI;
 
     public GameObject playerPrefab;
 
@@ -38,9 +40,11 @@ public class GameSetup : MonoInstaller
 
         Container.Bind<IInputReader>().FromInstance(new PlayerInputReader(joystick));
         Container.Bind<PlayerResources>().FromInstance(pResources);
-        Container.Bind<PlayerSpawnFactory>().FromInstance(playerFactory);
+        Container.Bind<IPlayerFactory>().FromInstance(playerFactory);
         Container.Bind<CameraController>().FromInstance(cameraController);
         Container.Bind<TransferMoveManager>().FromInstance(transferManager);
+        Container.Bind<ActivateByDistanceToPlayerManager>().FromInstance(activateByDistance);
+        Container.Bind<WorldToScreenUIManager>().FromInstance(worldToScreenUI);
 
         playerResourcesView.Bind(pResources.resources);
 

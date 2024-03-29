@@ -4,7 +4,14 @@ using Zenject;
 
 namespace Prototype
 {
-    public class PlayerSpawnFactory
+    public interface IPlayerFactory
+    {
+        public event Action<GameObject> onPlayerSpawned;
+        void SpawnAtPosition(Vector3 spawnPos);
+        public GameObject CurrentPlayerUnit { get; }
+    }
+
+    public class PlayerSpawnFactory : IPlayerFactory
     {
         public event Action<GameObject> onPlayerSpawned = delegate { };
 
