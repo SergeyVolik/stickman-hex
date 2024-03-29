@@ -29,8 +29,7 @@ public class CameraController : MonoBehaviour
             var unitForward = uniTrans.forward;
             var offset = unitForward * lookAheadOffset;
 
-            m_CameraTarget.position = Vector3.Lerp(m_CameraTarget.position, unitPos + offset, Time.deltaTime * lookAheadSpeed);
-            
+            m_CameraTarget.position = Vector3.Lerp(m_CameraTarget.position, unitPos + offset, Time.deltaTime * lookAheadSpeed);           
         }
     }
 }

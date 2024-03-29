@@ -322,7 +322,7 @@ GameObject:
   m_Layer: 0
   m_Name: ZoneTrigger
   m_TagString: Untagged
-  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -334,7 +334,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2838184307397413581}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.74, y: 0.746, z: -3.24}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -370,7 +370,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10e3c60b5a8fa2d4b812b4d557d230f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NextLocation: {fileID: 0}
+  NextLocations: []
   ResourceToOpen:
     m_InitResources: []
   RequiredResourceView: {fileID: 3819893216216642491}

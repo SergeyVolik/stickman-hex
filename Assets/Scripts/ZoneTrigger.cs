@@ -21,7 +21,7 @@ namespace Prototype
         }
 
         [FormerlySerializedAs("ToOpen")]
-        public GameObject NextLocation;
+        public GameObject[] NextLocations;
         public ResourceContainer ResourceToOpen;
         private ResourceContainer m_CurrentDelayedResources;
         private ResourceContainer m_CurrentRealResources;
@@ -59,6 +59,7 @@ namespace Prototype
         }
 
         bool m_Inted = false;
+
         public void Init()
         {
             if (m_Inted)
@@ -71,7 +72,14 @@ namespace Prototype
             RequiredResourceView.Bind(ResourceToOpen, m_CurrentDelayedResources);
 
             m_Camera = Camera.main;
-            NextLocation.SetActive(false);
+
+            if (NextLocations != null)
+            {
+                foreach (var item in NextLocations)
+                {
+                    item.SetActive(false);
+                }
+            }           
         }
 
         private void OnTriggerEnter(Collider other)
@@ -95,12 +103,17 @@ namespace Prototype
         {
             if (other.GetComponent<PlayerCharacterInput>())
             {
-                if (m_TransferTween != null)
+                StopTransfer();
+            }
+        }
+
+        private void StopTransfer()
+        {
+            if (m_TransferTween != null)
+            {
+                foreach (var item in m_TransferTween)
                 {
-                    foreach (var item in m_TransferTween)
-                    {
-                        item?.Kill();
-                    }
+                    item?.Kill();
                 }
             }
         }
@@ -113,10 +126,13 @@ namespace Prototype
 
             if (finished == true)
             {
-                NextLocation.gameObject.SetActive(true);
-                NextLocation.transform.localScale = Vector3.zero;
-                NextLocation.transform.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutBack);
-                gameObject.SetActive(false);
+                foreach (var locations in NextLocations)
+                {
+                    locations.gameObject.SetActive(true);
+                    locations.transform.localScale = Vector3.zero;
+                    locations.transform.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutBack);
+                    gameObject.SetActive(false);
+                }               
             }
         }
 
@@ -139,6 +155,7 @@ namespace Prototype
                 float spawnT = tickInterval;
                 bool executeSpawn = lastTransferCount == transferList[i].toTransfer;
                 float duration = spawnTicksPerTransfer * tickInterval;
+
                 var trensferTween = DOTween.To(() => lastTransferCount, (newTransferCount) => lastTransferCount = newTransferCount, tweenDestination, duration)
                     .SetEase(resourceTransferEase).OnUpdate(() =>
                     {
@@ -190,6 +207,7 @@ namespace Prototype
             int resourcesToTransfer = (int)currentTransfer;
             playerRes.AddResource(resourceItem.ResourceType, resourceItem.LastTransferedResources);
             playerRes.RemoveResource(resourceItem.ResourceType, resourcesToTransfer);
+
             var toRemove = resourceItem.LastTransferedResources;
 
             resourceItem.LastTransferedResources = resourcesToTransfer;
@@ -224,7 +242,8 @@ namespace Prototype
                 var alreadyTransfered = m_CurrentRealResources.GetResource(item.Key);
                 var requiredResources = item.Value;
                 var toTransfer = requiredResources - alreadyTransfered;
-                if (playerResources < requiredResources)
+
+                if (playerResources < toTransfer)
                 {
                     toTransfer = playerResources;
                 }

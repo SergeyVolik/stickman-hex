@@ -16,7 +16,7 @@ GameObject:
   m_Layer: 3
   m_Name: FarmableObject
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 2974397684917235467, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -63,6 +63,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_RequiredWeapon: 0
   m_HitParticle: {fileID: 0}
+  m_DeathParticle: {fileID: 0}
+  m_PartRemoveParticle: {fileID: 0}
   m_PartsParent: {fileID: 0}
   m_Parts: []
   MessagePrefab: {fileID: 7992831679333375622, guid: e3f3042afd3e879458c1e9b8535296e0,
