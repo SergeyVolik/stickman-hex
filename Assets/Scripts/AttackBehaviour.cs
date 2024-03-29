@@ -1,4 +1,5 @@
 using Prototype;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class AttackBehaviour : MonoBehaviour
@@ -16,7 +17,7 @@ public class AttackBehaviour : MonoBehaviour
     public BoxCollider m_CastCollider;
 
     private void Awake()
-    {     
+    {
         m_Transform = transform;
         foreach (Weapon weapon in weapons)
         {
@@ -36,16 +37,18 @@ public class AttackBehaviour : MonoBehaviour
     private void M_CharAnimator_onDisableHitBox()
     {
         m_CurrentWeapon.EnableHitBox(false);
+        m_CurrentWeapon.HideWeapon();
     }
 
     private void M_CharAnimator_onEnableHitBox()
     {
+        m_CurrentWeapon.ShowWeapon();
         m_CurrentWeapon.EnableHitBox(true);
     }
 
     private void M_CharAnimator_onEndAttack()
-    {        
-        m_CurrentWeapon.HideWeapon();
+    {
+      
         IsAttacking = false;
     }
 
@@ -70,18 +73,24 @@ public class AttackBehaviour : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (IsAttacking)
-            return;
+        //if (IsAttacking)
+        //    return;
 
         var castTrans = m_CastCollider.transform;
 
+        var transScale = m_CastCollider.transform.lossyScale;
+        var boxSize = m_CastCollider.size;
+
+        var size = new Vector3(boxSize.x * transScale.x, boxSize.y * transScale.y, boxSize.z * transScale.z);
+        var halfSize = size / 2f;
+
         int count = Physics.OverlapBoxNonAlloc(
             castTrans.position + m_CastCollider.center,
-            m_CastCollider.size / 2,
+            halfSize,
             m_CastedColliders,
             castTrans.rotation,
             m_AttackableLayer);
-   
+
         for (int i = 0; i < count; i++)
         {
             var collider = m_CastedColliders[i];
@@ -90,8 +99,14 @@ public class AttackBehaviour : MonoBehaviour
             {
                 IsAttacking = true;
                 m_CurrentWeapon = GetWeaponByType(farmableObj.RequiredWeapon);
-                m_CharAnimator.Attack();
+                m_CharAnimator.AttackTrigger();
             }
+
+        }
+
+        if (count == 0)
+        {
+            m_CharAnimator.ResetAttack();
         }
     }
 }

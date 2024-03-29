@@ -63,7 +63,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_RequiredWeapon: 0
   m_HitParticle: {fileID: 0}
-  Parts: []
+  m_PartsParent: {fileID: 0}
+  m_Parts: []
   MessagePrefab: {fileID: 7992831679333375622, guid: e3f3042afd3e879458c1e9b8535296e0,
     type: 3}
   m_StartResource:
@@ -79,8 +80,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.6, y: 5, z: 0.6}
-  m_Center: {x: 0, y: 2.5, z: 0}
+  m_Size: {x: 0.6, y: 1.5702993, z: 0.6}
+  m_Center: {x: 0, y: 0.78514963, z: 0}
 --- !u!114 &8110817377537838954
 MonoBehaviour:
   m_ObjectHideFlags: 0

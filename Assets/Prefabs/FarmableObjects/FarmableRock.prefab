@@ -99,6 +99,12 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 450838422679520127}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &7654106371527861257 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7816395284708190070, guid: d767cc02bbbf49b408f00e6b817d87c5,
+    type: 3}
+  m_PrefabInstance: {fileID: 450838422679520127}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &7673142115787090960 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7799611344256053103, guid: d767cc02bbbf49b408f00e6b817d87c5,
@@ -119,6 +125,11 @@ PrefabInstance:
       objectReference: {fileID: 5926804185800479096}
     - target: {fileID: 3052649895966819385, guid: 1f6cdd123875b1849959cc8cc43dfe10,
         type: 3}
+      propertyPath: m_PartsParent
+      value: 
+      objectReference: {fileID: 7654106371527861257}
+    - target: {fileID: 3052649895966819385, guid: 1f6cdd123875b1849959cc8cc43dfe10,
+        type: 3}
       propertyPath: Parts.Array.size
       value: 5
       objectReference: {fileID: 0}
@@ -126,6 +137,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_RequiredWeapon
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3052649895966819385, guid: 1f6cdd123875b1849959cc8cc43dfe10,
+        type: 3}
+      propertyPath: m_Parts.Array.size
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3052649895966819385, guid: 1f6cdd123875b1849959cc8cc43dfe10,
         type: 3}
@@ -157,6 +173,31 @@ PrefabInstance:
       propertyPath: Parts.Array.data[5]
       value: 
       objectReference: {fileID: 6609154133576663206}
+    - target: {fileID: 3052649895966819385, guid: 1f6cdd123875b1849959cc8cc43dfe10,
+        type: 3}
+      propertyPath: m_Parts.Array.data[0]
+      value: 
+      objectReference: {fileID: 6762203217247730313}
+    - target: {fileID: 3052649895966819385, guid: 1f6cdd123875b1849959cc8cc43dfe10,
+        type: 3}
+      propertyPath: m_Parts.Array.data[1]
+      value: 
+      objectReference: {fileID: 7673142115787090960}
+    - target: {fileID: 3052649895966819385, guid: 1f6cdd123875b1849959cc8cc43dfe10,
+        type: 3}
+      propertyPath: m_Parts.Array.data[2]
+      value: 
+      objectReference: {fileID: 1907153171582004081}
+    - target: {fileID: 3052649895966819385, guid: 1f6cdd123875b1849959cc8cc43dfe10,
+        type: 3}
+      propertyPath: m_Parts.Array.data[3]
+      value: 
+      objectReference: {fileID: 5347664936556609927}
+    - target: {fileID: 3052649895966819385, guid: 1f6cdd123875b1849959cc8cc43dfe10,
+        type: 3}
+      propertyPath: m_Parts.Array.data[4]
+      value: 
+      objectReference: {fileID: 7481743142943236387}
     - target: {fileID: 3052649895966819385, guid: 1f6cdd123875b1849959cc8cc43dfe10,
         type: 3}
       propertyPath: m_StartResource.m_InitResources.Array.size

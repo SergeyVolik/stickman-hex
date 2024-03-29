@@ -1,9 +1,9 @@
 using DG.Tweening;
 using UnityEngine;
-using UnityEngine.UIElements;
 using Zenject;
 using CandyCoded.HapticFeedback;
 using Unity.Mathematics;
+using UnityEngine.Serialization;
 
 namespace Prototype
 {
@@ -16,47 +16,65 @@ namespace Prototype
         [SerializeField]
         private ParticleSystem m_HitParticle;
 
+        [SerializeField]
+        private ParticleSystem m_DeathParticle;
+
+        [SerializeField]
+        private ParticleSystem m_PartRemoveParticle;
+
         public WeaponType RequiredWeapon => m_RequiredWeapon;
 
-        public GameObject[] Parts;
+        [SerializeField]
+        private Transform m_PartsParent;
+
+        [FormerlySerializedAs("Parts")]
+        [SerializeField]
+        private GameObject[] m_Parts;
+
         public WorldSpaceMessage MessagePrefab;
+
         [SerializeField]
         private ResourceContainer m_StartResource;
         private ResourceContainer m_ArlreadyDroppedResources;
 
         private HealthData m_Health;
         private Collider m_Collider;
-        private Transform m_Transform;
         private TransferMoveManager m_TransManager;
+        int m_PrevActivateParts;
 
-        [Inject]
+       [Inject]
         void Construct(TransferMoveManager transManager)
         {
             m_TransManager = transManager;
         }
 
+       
         private void Awake()
         {
             m_Health = GetComponent<HealthData>();
             m_Collider = GetComponent<Collider>();
             m_ArlreadyDroppedResources = new ResourceContainer();
 
+            m_PrevActivateParts = m_Parts.Length;
             m_Health.onHealthChanged += M_Health_onHealthChaged;
             m_Health.onDeath += M_Health_onDeath;
             m_Health.onResurrected += M_Health_onResurrected;
-            m_Transform = transform;
+
         }
 
         private void M_Health_onResurrected()
         {
-            m_Transform.localScale = new Vector3(1, 0, 1);
-            m_Transform.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutSine);
+            m_PartsParent.localScale = new Vector3(1, 0, 1);
+            m_PartsParent.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutSine);
             m_ArlreadyDroppedResources.Clear();
         }
 
         private void M_Health_onDeath()
         {
-
+            if (m_DeathParticle != null)
+            {
+                m_DeathParticle.Play();
+            }
         }
 
         private void M_Health_onHealthChaged(HealthChangeData obj)
@@ -65,9 +83,8 @@ namespace Prototype
             UpdateObjectParts();
 
             m_Collider.enabled = !m_Health.IsDead;
+            m_PartsParent.DOPunchScale(new Vector3(0, -0.3f, 0), 0.15f);
 
-            //m_Transform.DOShakeScale(0.1f, new Vector3(0, 1, 0));
-            m_Transform.DOPunchScale(new Vector3(0, -0.3f, 0), 0.15f);
             if (obj.Source != null && obj.IsDamage)
             {
                 if (m_HitParticle != null)
@@ -88,32 +105,51 @@ namespace Prototype
         {
             if (m_Health.HasMaxHealth())
             {
-                for (int i = 0; i < Parts.Length; i++)
+                for (int i = 0; i < m_Parts.Length; i++)
                 {
-                    Parts[i].SetActive(true);
+                    m_Parts[i].SetActive(true);
                 }
             }
             else if (m_Health.IsDead)
             {
-                for (int i = 0; i < Parts.Length; i++)
+                for (int i = 0; i < m_Parts.Length; i++)
                 {
-                    Parts[i].SetActive(false);
+                    m_Parts[i].SetActive(false);
                 }
             }
             else
             {
                 var currentHealthPercent = m_Health.currentHealth / (float)m_Health.maxHealth;
-                var lastIndex = Parts.Length - 1;
+                var lastIndex = m_Parts.Length - 1;
                 int ActiveParts = lastIndex - (int)(currentHealthPercent * lastIndex);
 
-                for (int i = 0; i < Parts.Length; i++)
+               
+                bool partRemoved = false;
+
+                for (int i = 0; i < m_Parts.Length; i++)
                 {
                     bool activateFirstElement = i == 0 && m_Health.HasMaxHealth();
-                    bool activateLastElement = !m_Health.IsDead && i == Parts.Length - 1;
+                    bool activateLastElement = !m_Health.IsDead && i == m_Parts.Length - 1;
                     bool otherPartsActivate = ActiveParts <= i;
 
-                    Parts[i].SetActive(otherPartsActivate || activateFirstElement || activateLastElement);
+                    bool activatePart = otherPartsActivate || activateFirstElement || activateLastElement;
+                    if (partRemoved == false)
+                    {
+                        partRemoved = m_Parts[i].activeSelf && !activatePart;
+                    }
+                    m_Parts[i].SetActive(otherPartsActivate || activateFirstElement || activateLastElement);
                 }
+
+                if (partRemoved == true)
+                {
+                    if (m_PartRemoveParticle != null)
+                    {
+                        m_PartRemoveParticle.Play();
+                    }
+                }
+
+
+                m_PrevActivateParts = ActiveParts;
             }
         }
 
@@ -144,21 +180,21 @@ namespace Prototype
                     holder.Resources.AddResource(resourceType, toDrop);
 
                     var worldMessageInst = GameObjectPool.GetPoolObject(MessagePrefab);
-                    worldMessageInst.Show(m_Transform.position, $"+{toDrop}", item.Key.resourceIcon);
+                    worldMessageInst.Show(m_PartsParent.position, $"+{toDrop}", item.Key.resourceIcon);
 
                     int transferVisualCount = math.clamp(toDrop, 0, maxFropItems);
 
                     for (int i = 0; i < transferVisualCount; i++)
                     {
                         var resourceObjectInstance = GameObjectPool.GetPoolObject(resourceType.Resource3dItem);
-                        resourceObjectInstance.transform.position = m_Transform.position;
+                        resourceObjectInstance.transform.position = m_PartsParent.position;
                         resourceObjectInstance.SetActive(true);
 
                         var rb = resourceObjectInstance.GetComponent<Rigidbody>();
 
                         var initialVelocity = Vector3.up * itemSpeed;
 
-                        m_TransManager.Transfer3dObject(rb, m_Transform.position, initialVelocity, holder.CenterPoint, moveDuration: 0.7f,
+                        m_TransManager.Transfer3dObject(rb, m_PartsParent.position, initialVelocity, holder.CenterPoint, moveDuration: 0.5f,
                             onComplete: () =>
                         {
                             rb.GetComponent<PoolObject>().Release();

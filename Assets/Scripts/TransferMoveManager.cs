@@ -12,7 +12,11 @@ namespace Prototype
         private class TransferItem
         {
             public float moveDelay;
-            public float currentTime;
+            public float scaleDelay;
+            public float scaleDuration;
+            public float moveTime;
+            public float scaleTime;
+
             public float moveDuration;
             public Transform moveableObject;
             public Transform targetPoint;
@@ -21,13 +25,13 @@ namespace Prototype
             public Vector3 startPos;
         }
 
-        private List<TransferItem> m_Items;
+        private List<TransferItem> m_TransferItems;
         private List<TransferItem> m_ToRemove;
         const int INIT_CAP = 100;
 
         private void Awake()
         {
-            m_Items = new List<TransferItem>(INIT_CAP);
+            m_TransferItems = new List<TransferItem>(INIT_CAP);
             m_ToRemove = new List<TransferItem>();
         }
 
@@ -40,6 +44,7 @@ namespace Prototype
            float maxVectorAngleOffset = 10,
            float moveDelay = 1f,
            float moveDuration = 1f,
+           Ease easeFunctionType = Ease.OutSine,
            Action onComplete = null
            )
         {
@@ -57,50 +62,63 @@ namespace Prototype
 
             rb.velocity = velocityWithOffset;
 
+            float scaleDration = moveDuration / 2f;
+
             var item = new TransferItem()
             {
                 moveableObject = rb.transform,
                 moveDelay = moveDelay,
+                scaleDelay = moveDelay + scaleDration,
+                scaleDuration = scaleDration,
                 moveDuration = moveDuration,
                 onCompletedCallback = onComplete,
                 targetPoint = targetPoint,
-                easeFunction = EaseManager.ToEaseFunction(Ease.OutSine)
+                easeFunction = EaseManager.ToEaseFunction(easeFunctionType)
             };
 
-            m_Items.Add(item);
+            m_TransferItems.Add(item);
         }
 
         private void Update()
         {
             var deltaTIme = Time.deltaTime;
 
-            for (int i = 0; i < m_Items.Count; i++)
+            for (int i = 0; i < m_TransferItems.Count; i++)
             {
-                var item = m_Items[i];
+                var item = m_TransferItems[i];
 
                 item.moveDelay -= deltaTIme;
+                item.scaleDelay -= deltaTIme;
 
+                if (item.scaleDelay <= 0)
+                {
+                    item.scaleTime += deltaTIme;
+
+                }
                 if (item.moveDelay <= 0)
                 {
-                    item.currentTime += Time.deltaTime / item.moveDuration;
+                    item.moveTime += deltaTIme;
                 }
                 else
                 {
                     item.startPos = item.moveableObject.position;
                 }
 
-                if (item.currentTime > item.moveDuration)
+                if (item.moveTime > item.moveDuration)
                 {
                     m_ToRemove.Add(item);
                 }
 
-                item.moveableObject.position = Vector3.Lerp(item.startPos, item.targetPoint.position, item.easeFunction(item.currentTime, item.moveDuration, 0, 0));
+                var moveT = item.easeFunction(item.moveTime, item.moveDuration, 0, 0);
+                var scaleT = item.easeFunction(item.scaleTime, item.scaleDuration, 0, 0);
+                item.moveableObject.localScale = Vector3.Lerp(Vector3.one, Vector3.zero, scaleT);
+                item.moveableObject.position = Vector3.Lerp(item.startPos, item.targetPoint.position, moveT);
             }
 
             foreach (var item in m_ToRemove)
             {
                 item.onCompletedCallback?.Invoke();
-                m_Items.Remove(item);
+                m_TransferItems.Remove(item);
             }
 
             m_ToRemove.Clear();

@@ -131,10 +131,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2795351019614907908, guid: 76ce5c59a9540c140b7a8f59d8c01325,
+        type: 3}
+      propertyPath: m_CollisionDetection
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5754656698365110477, guid: 76ce5c59a9540c140b7a8f59d8c01325,
         type: 3}
       propertyPath: m_RootOrder
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5754656698365110477, guid: 76ce5c59a9540c140b7a8f59d8c01325,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.088
+      objectReference: {fileID: 0}
+    - target: {fileID: 5754656698365110477, guid: 76ce5c59a9540c140b7a8f59d8c01325,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.803
       objectReference: {fileID: 0}
     - target: {fileID: 7770082212801113315, guid: 76ce5c59a9540c140b7a8f59d8c01325,
         type: 3}

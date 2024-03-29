@@ -46,13 +46,16 @@ namespace Prototype
         public void EnableHitBox(bool enable)
         {
             m_HitBox.enabled = enable;
+            ActivateTrail(enable);
         }
 
         public void HideWeapon()
         {
-            ActivateTrail(false);
-            m_DeactivateTween = m_Transform.DOScale(Vector3.zero, 0.2f).OnComplete(() => {
-                ActivateTrail(false);
+           
+            m_DeactivateTween = m_Transform
+                .DOScale(Vector3.zero, 0.2f)
+                .OnComplete(() => {
+               
             }).SetDelay(1f);
         }
 
@@ -61,8 +64,7 @@ namespace Prototype
             m_DeactivateTween?.Kill();
 
             float activateDuration = 0.2f;
-            m_Transform.DOScale(Vector3.one, activateDuration).SetEase(Ease.InSine).OnComplete(() => {
-                ActivateTrail(true);
+            m_Transform.DOScale(Vector3.one, activateDuration).SetEase(Ease.InSine).OnComplete(() => {               
             });
         }
 

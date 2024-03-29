@@ -9,8 +9,11 @@ namespace Prototype
         private ICharacterController m_CharController;
 
         private static readonly int MoveInputHash = Animator.StringToHash("MoveInput");
-        private static readonly int AttackTriggerHash = Animator.StringToHash("Attack");
+        private static readonly int IsMovingHash = Animator.StringToHash("IsMoving");
 
+        private static readonly int AttackTriggerHash = Animator.StringToHash("Attack");
+        private static readonly int IsAttackingBoolHash = Animator.StringToHash("IsAttacking");
+   
         public event Action onBeginAttack = delegate { };
         public event Action onEndAttack = delegate { };
         public event Action onEnableHitBox = delegate { };
@@ -24,22 +27,34 @@ namespace Prototype
 
         private void Update()
         {
-            m_Animator.SetFloat(MoveInputHash, m_CharController.IsMoving ? 1f : 0f);
+            bool isMoving = m_CharController.IsMoving;
+
+            m_Animator.SetFloat(MoveInputHash, isMoving ? 1f : 0f);
+            m_Animator.SetBool(IsMovingHash, isMoving);
         }
 
-        public void Attack()
+        public void AttackTrigger()
         {
             m_Animator.SetTrigger(AttackTriggerHash);
+            m_Animator.SetBool(IsAttackingBoolHash, true);
+        }
+
+        public void ResetAttack()
+        {
+            m_Animator.ResetTrigger(AttackTriggerHash);
+            m_Animator.SetBool(IsAttackingBoolHash, false);
         }
 
         public void OnBeginAttack()
         {
             onBeginAttack.Invoke();
+            m_Animator.SetBool(IsAttackingBoolHash, true);
         }
 
         public void OnEndAttack()
         {
             onEndAttack.Invoke();
+            m_Animator.SetBool(IsAttackingBoolHash, false);
         }
 
         public void OnEnableHitBox()
