@@ -1,34 +1,89 @@
 using UnityEngine;
 
-[DisallowMultipleComponent]
-public class SaveableObject : MonoBehaviour
+namespace Prototype
 {
-    public SerializableGuid guid;
-
-    public bool savePosition = true;
-    public bool saveActiveState = true;
-
-    private void OnValidate()
+    [System.Serializable]
+    public class GameObjectSave
     {
-        var allItems = FindObjectsOfType<SaveableObject>();
+        public bool activeSelf;
+    }
 
-        if (guid == new SerializableGuid())
+    [System.Serializable]
+    public class TransformSave
+    {
+        public Vector3S position;
+    }
+
+    [DisallowMultipleComponent]
+    public class SaveableObject : MonoBehaviour, ISaveable<GameObjectSave>, ISaveable<TransformSave>
+    {
+        public SerializableGuid guid;
+
+        public bool savePosition = true;
+        public bool saveActiveState = true;
+
+        public void Load(GameObjectSave data)
         {
-            guid = System.Guid.NewGuid();
+            if (data == null)
+                return;
+
+            gameObject.SetActive(data.activeSelf);
+        }
+        public GameObjectSave Save()
+        {
+            if (saveActiveState == false)
+                return null;
+
+            return new GameObjectSave
+            {
+                activeSelf = gameObject.activeSelf,
+            };
         }
 
-        int count = 0;
-        foreach (var item in allItems)
+        public void Load(TransformSave data)
         {
-            if (item.guid == guid)
+            if (data == null)
+                return;
+
+            if (savePosition)
             {
-                count++;
+                transform.position = data.position;
             }
         }
 
-        if (count > 1)
+        TransformSave ISaveable<TransformSave>.Save()
         {
-            guid = System.Guid.NewGuid();
+            if (savePosition == false)
+                return null;
+
+            return new TransformSave
+            {
+                 position = transform.position,
+            };
+        }
+
+        private void OnValidate()
+        {
+            var allItems = FindObjectsOfType<SaveableObject>();
+
+            if (guid == new SerializableGuid())
+            {
+                guid = System.Guid.NewGuid();
+            }
+
+            int count = 0;
+            foreach (var item in allItems)
+            {
+                if (item.guid == guid)
+                {
+                    count++;
+                }
+            }
+
+            if (count > 1)
+            {
+                guid = System.Guid.NewGuid();
+            }
         }
     }
 }

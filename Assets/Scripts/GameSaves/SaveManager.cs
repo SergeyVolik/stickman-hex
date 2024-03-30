@@ -5,86 +5,91 @@ using System.Linq;
 using UnityEngine;
 using Zenject;
 
-[System.Serializable]
-public class PlayerSaveData
+namespace Prototype
 {
-    public List<ResourceSaveItem> playerResources = new List<ResourceSaveItem>();
-}
-
-[System.Serializable]
-public class ResourceSaveItem
-{
-    public int resourceTypeHash;
-    public int count;
-}
-
-public class SaveManager : MonoBehaviour
-{
-    private PlayerResources m_Resource;
-    private GameResources m_gResources;
-
-    private const string PLAYER_SAVE_KEY = "PLAYER_SAVE_KEY";
-
-    private void Awake()
+    [System.Serializable]
+    public class PlayerSaveData
     {
-        Load();
+        public List<ResourceSaveItem> playerResources = new List<ResourceSaveItem>();
     }
 
-    [Inject]
-    void Construct(PlayerResources pResources, GameResources gResources)
+    [System.Serializable]
+    public class ResourceSaveItem
     {
-        m_Resource = pResources;
-        m_gResources = gResources;
+        public int resourceTypeHash;
+        public int count;
     }
 
-    public void Save()
+    public class SaveManager : MonoBehaviour
     {
-        SaveSceneHelper.SaveGameScene();
+        private PlayerResources m_Resource;
+        private GameResources m_gResources;
 
-        var save = new PlayerSaveData();
+        private const string PLAYER_SAVE_KEY = "PLAYER_SAVE_KEY";
 
-        foreach (var item in m_Resource.resources.ResourceIterator())
+        private void Awake()
         {
-            save.playerResources.Add(new ResourceSaveItem
+            Load();
+        }
+
+        [Inject]
+        void Construct(PlayerResources pResources, GameResources gResources)
+        {
+            m_Resource = pResources;
+            m_gResources = gResources;
+        }
+
+        public void Save()
+        {
+            SaveSceneHelper.SaveGameScene();
+
+            var save = new PlayerSaveData();
+
+            foreach (var item in m_Resource.resources.ResourceIterator())
             {
-                count = item.Value,
-                resourceTypeHash = item.Key.GetHashCode(),
-            });
+                save.playerResources.Add(new ResourceSaveItem
+                {
+                    count = item.Value,
+                    resourceTypeHash = item.Key.GetHashCode(),
+                });
+            }
+
+            PlayerPrefs.SetString(PLAYER_SAVE_KEY, JsonConvert.SerializeObject(save));
         }
 
-        PlayerPrefs.SetString(PLAYER_SAVE_KEY, JsonConvert.SerializeObject(save));
-    }
-
-    public void Load()
-    {
-        if (!PlayerPrefs.HasKey(PLAYER_SAVE_KEY))
-            return;
-
-        SaveSceneHelper.LoadGameScene();
-
-        var saveData = JsonConvert.DeserializeObject<PlayerSaveData>(PlayerPrefs.GetString(PLAYER_SAVE_KEY));
-
-        m_Resource.resources.Clear();
-
-        foreach (var item in saveData.playerResources)
+        public void Load()
         {
-            var resType = m_gResources.Value.FirstOrDefault(e => e.GetHashCode() == item.resourceTypeHash);
-            m_Resource.resources.SetResource(resType, item.count);
-        }
-    }
+            Debug.Log("Load");
 
-    private void OnApplicationPause(bool pause)
-    {
-        if (pause == true)
+            if (!PlayerPrefs.HasKey(PLAYER_SAVE_KEY))
+                return;
+
+            SaveSceneHelper.LoadGameScene();
+
+            var saveData = JsonConvert.DeserializeObject<PlayerSaveData>(PlayerPrefs.GetString(PLAYER_SAVE_KEY));
+
+            m_Resource.resources.Clear();
+
+            foreach (var item in saveData.playerResources)
+            {
+                var resType = m_gResources.Value.FirstOrDefault(e => e.GetHashCode() == item.resourceTypeHash);
+                m_Resource.resources.SetResource(resType, item.count);
+            }
+        }
+
+        private void OnApplicationPause(bool pause)
+        {
+            if (pause == true)
+            {
+                Save();
+                Debug.Log("OnApplicationPause Save");
+            }
+        }
+
+        private void OnApplicationQuit()
         {
             Save();
-            Debug.Log("OnApplicationPause Save");
+            Debug.Log("OnApplicationQuit Save");
         }
-    }
-
-    private void OnApplicationQuit()
-    {
-        Save();
-        Debug.Log("OnApplicationQuit Save");
     }
 }

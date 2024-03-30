@@ -1,8 +1,8 @@
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -10,7 +10,13 @@ using Zenject;
 
 namespace Prototype
 {
-    public class ZoneTrigger : MonoBehaviour
+    [System.Serializable]
+    public class ZoneTriggerSave
+    {
+        public List<ResourceSaveItem> currentResources = new List<ResourceSaveItem>();
+    }
+
+    public class ZoneTrigger : MonoBehaviour, ISaveable<ZoneTriggerSave>
     {
         public class TransferData
         {
@@ -33,7 +39,7 @@ namespace Prototype
         private TransferMoveManager m_TransManager;
         private WorldToScreenUIManager m_worldToScreen;
         private ActivateByDistanceToPlayerManager m_actByDist;
-
+        private GameResources m_gResources;
         public Transform TransferEndPoint;
         public ParticleSystem TransferParticle;
         private Camera m_Camera;
@@ -60,12 +66,14 @@ namespace Prototype
             PlayerResources resources,
             TransferMoveManager transManager,
             WorldToScreenUIManager worldToScreen,
-            ActivateByDistanceToPlayerManager actByDist)
+            ActivateByDistanceToPlayerManager actByDist,
+            GameResources gResources)
         {
             m_PlayerRes = resources;
             m_TransManager = transManager;
             m_worldToScreen = worldToScreen;
             m_actByDist = actByDist;
+            m_gResources = gResources;
         }
 
         private void Awake()
@@ -111,12 +119,20 @@ namespace Prototype
                 DistanceToActivate = 4,
                 ItemToActivate = m_ZoneUiInstance
             });
+
+            if (m_ZoneUiInstance)
+            {
+                m_ZoneUiInstance.gameObject.SetActive(true);
+            }
         }
 
         private void OnDisable()
         {
-            m_worldToScreen.Unregister(m_worldToScreenHandle);
-            m_actByDist.Unregister(m_ActivateByDistanceHandle);
+            m_worldToScreen?.Unregister(m_worldToScreenHandle);
+            m_actByDist?.Unregister(m_ActivateByDistanceHandle);
+
+            if(m_ZoneUiInstance)
+                m_ZoneUiInstance.gameObject.SetActive(false);
         }
 
         private void OnTriggerEnter(Collider other)
@@ -305,6 +321,33 @@ namespace Prototype
             }
 
             return transferData;
+        }
+
+
+        ZoneTriggerSave ISaveable<ZoneTriggerSave>.Save()
+        {
+            var zoneData = new ZoneTriggerSave();
+
+            foreach (var item in m_CurrentRealResources.ResourceIterator())
+            {
+                zoneData.currentResources.Add(new ResourceSaveItem
+                {
+                    count = item.Value,
+                    resourceTypeHash = item.Key.GetHashCode()
+                });
+            }
+
+            return zoneData;
+        }
+
+        public void Load(ZoneTriggerSave data)
+        {
+            foreach (var item in data.currentResources)
+            {
+                var resource = m_gResources.Value.FirstOrDefault(e => item.resourceTypeHash == e.GetHashCode());
+                m_CurrentRealResources.SetResource(resource, item.count);
+                m_CurrentDelayedResources.SetResource(resource, item.count);
+            }
         }
     }
 }

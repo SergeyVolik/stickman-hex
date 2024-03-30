@@ -3,79 +3,95 @@ using Prototype;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SaveSceneHelper
+namespace Prototype
 {
-    const string SAVE_NAME = "SCENE1_DEFAULT";
-
-    public static bool HasSave()
+    public class SaveSceneHelper
     {
-        return PlayerPrefs.HasKey(SAVE_NAME);
-    }
+        const string SAVE_NAME = "SCENE1_DEFAULT";
 
-    public static void LoadGameScene()
-    {
-        if (!HasSave())
+        public static bool HasSave()
         {
-            return;
+            return PlayerPrefs.HasKey(SAVE_NAME);
         }
 
-        var saveableObjects = GameObject.FindObjectsOfType<SaveableObject>();
-
-        var saveString = PlayerPrefs.GetString(SAVE_NAME);
-
-        var saveObj = JsonConvert.DeserializeObject<SceneSaveData>(saveString);
-
-        foreach (var item in saveableObjects)
+        public static void LoadGameScene()
         {
-            var guid = item.guid;
-
-            if (item.savePosition)
+            if (!HasSave())
             {
-                if (saveObj.SavedPositions.TryGetValue(guid, out Vector3S pos))
-                    item.transform.position = pos;
+                return;
             }
 
-            if (item.saveActiveState)
+            var saveableObjects = GameObject.FindObjectsOfType<SaveableObject>(includeInactive: true);
+
+            var saveString = PlayerPrefs.GetString(SAVE_NAME);
+
+            var saveObj = JsonConvert.DeserializeObject<SceneSaveData>(saveString);
+
+            foreach (var item in saveableObjects)
             {
-                if (saveObj.SavedActiveState.TryGetValue(guid, out bool isActive))
-                    item.gameObject.SetActive(isActive);
-            }
-        }
-    }
+                var guid = item.guid;
 
-    public static void ResetGameSceneSave()
-    {
-        PlayerPrefs.DeleteKey(SAVE_NAME);
-    }
+                if (item.TryGetComponent<ISaveable<TransformSave>>(out var comp))
+                {
+                    if (saveObj.TransformSave.TryGetValue(guid, out var data))
+                        comp.Load(data);
+                }
 
-    public static void SaveGameScene()
-    {
-        var saveableObjects = GameObject.FindObjectsOfType<SaveableObject>();
+                if (item.TryGetComponent<ISaveable<GameObjectSave>>(out var goSave))
+                {
+                    if (saveObj.GameObjectSave.TryGetValue(guid, out var data))                   
+                        goSave.Load(data);                   
+                }
 
-        var save = new SceneSaveData();
-
-        foreach (var item in saveableObjects)
-        {
-            var guid = item.guid;
-
-            if (item.savePosition)
-            {
-                save.SavedPositions.Add(guid, item.transform.position);
-            }
-
-            if (item.saveActiveState)
-            {
-                save.SavedActiveState.Add(guid, item.gameObject.activeSelf);
+                if (item.TryGetComponent<ISaveable<ZoneTriggerSave>>(out var zoneSave))
+                {
+                    if (saveObj.ZoneSave.TryGetValue(guid, out var data))
+                        zoneSave.Load(data);
+                }
             }
         }
 
-        PlayerPrefs.SetString(SAVE_NAME, JsonConvert.SerializeObject(save));
-    }
-}
+        public static void ResetGameSceneSave()
+        {
+            PlayerPrefs.DeleteKey(SAVE_NAME);
+        }
 
-[System.Serializable]
-public class SceneSaveData
-{
-    public Dictionary<SerializableGuid, Vector3S> SavedPositions = new Dictionary<SerializableGuid, Vector3S>();
-    public Dictionary<SerializableGuid, bool> SavedActiveState = new Dictionary<SerializableGuid, bool>();
+        public static void SaveGameScene()
+        {
+            var saveableObjects = GameObject.FindObjectsOfType<SaveableObject>(includeInactive: true);
+
+            var save = new SceneSaveData();
+
+            foreach (var item in saveableObjects)
+            {
+                var guid = item.guid;
+
+                if (item.TryGetComponent<ISaveable<TransformSave>>(out var comp))
+                {
+                    save.TransformSave.Add(guid, comp.Save());
+                }
+
+                if (item.TryGetComponent<ISaveable<GameObjectSave>>(out var goSave))
+                {
+                    save.GameObjectSave.Add(guid, goSave.Save());
+                }
+
+                if (item.TryGetComponent<ISaveable<ZoneTriggerSave>>(out var ztSave))
+                {
+                    save.ZoneSave.Add(guid, ztSave.Save());
+                }
+            }
+
+            PlayerPrefs.SetString(SAVE_NAME, JsonConvert.SerializeObject(save));
+        }
+    }
+
+    [System.Serializable]
+    public class SceneSaveData
+    {
+        public Dictionary<SerializableGuid, TransformSave> TransformSave = new Dictionary<SerializableGuid, TransformSave>();
+        public Dictionary<SerializableGuid, GameObjectSave> GameObjectSave = new Dictionary<SerializableGuid, GameObjectSave>();
+        public Dictionary<SerializableGuid, ZoneTriggerSave> ZoneSave = new Dictionary<SerializableGuid, ZoneTriggerSave>();
+
+    }
 }
