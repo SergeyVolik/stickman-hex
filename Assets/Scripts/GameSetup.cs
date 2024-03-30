@@ -39,6 +39,7 @@ public class GameSetup : MonoInstaller
     public GameObject playerPrefab;
 
     public GameResources gameResources;
+    public SaveManager saveManager;
 
     public override void InstallBindings()
     {
@@ -53,6 +54,7 @@ public class GameSetup : MonoInstaller
         Container.Bind<ActivateByDistanceToPlayerManager>().FromInstance(activateByDistance);
         Container.Bind<WorldToScreenUIManager>().FromInstance(worldToScreenUI);
         Container.Bind<GameResources>().FromInstance(gameResources);
+        Container.Bind<SaveManager>().FromInstance(saveManager);
 
         playerResourcesView.Bind(pResources.resources);
 

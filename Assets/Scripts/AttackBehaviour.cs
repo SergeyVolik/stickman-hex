@@ -16,6 +16,8 @@ namespace Prototype
         [SerializeField]
         public BoxCollider m_CastCollider;
 
+        private Weapon m_CurrentWeapon;
+
         private void Awake()
         {
             m_Transform = transform;
@@ -47,7 +49,7 @@ namespace Prototype
 
         private void M_CharAnimator_onEndAttack()
         {
-            IsAttacking = false;
+            
         }
 
         private void M_CharAnimator_onBeginAttack()
@@ -66,14 +68,8 @@ namespace Prototype
             return null;
         }
 
-        private Weapon m_CurrentWeapon;
-        private bool IsAttacking;
-
         private void FixedUpdate()
         {
-            //if (IsAttacking)
-            //    return;
-
             var castTrans = m_CastCollider.transform;
 
             var transScale = m_CastCollider.transform.lossyScale;
@@ -95,11 +91,9 @@ namespace Prototype
 
                 if (collider.TryGetComponent<FarmableObject>(out var farmableObj))
                 {
-                    IsAttacking = true;
                     m_CurrentWeapon = GetWeaponByType(farmableObj.RequiredWeapon);
                     m_CharAnimator.AttackTrigger();
                 }
-
             }
 
             if (count == 0)
@@ -108,5 +102,4 @@ namespace Prototype
             }
         }
     }
-
 }

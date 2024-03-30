@@ -9,7 +9,6 @@ namespace Prototype
     {
         public void Activate();
         public void Deactivate();
-
         public bool IsActive();
     }
 

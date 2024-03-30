@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3052649895966819385}
   - component: {fileID: 155359121806028041}
   - component: {fileID: 8110817377537838954}
+  - component: {fileID: 3763437556218892147}
   m_Layer: 3
   m_Name: FarmableObject
   m_TagString: Untagged
@@ -97,3 +98,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resurrectionDuration: 5
+--- !u!114 &3763437556218892147
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7325258845627080027}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db0cea325a6fa3f4289becf3f1067655, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  activationDuration: 0.25

@@ -40,9 +40,9 @@ namespace Prototype
         private HealthData m_Health;
         private Collider m_Collider;
         private TransferMoveManager m_TransManager;
-        int m_PrevActivateParts;
+        int m_PrevActivateParts;    
 
-       [Inject]
+        [Inject]
         void Construct(TransferMoveManager transManager)
         {
             m_TransManager = transManager;

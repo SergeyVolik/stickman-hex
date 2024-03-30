@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using Prototype;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -90,6 +91,11 @@ namespace Prototype
         {
             Save();
             Debug.Log("OnApplicationQuit Save");
+        }
+
+        public void RemoveSaves()
+        {
+            PlayerPrefs.DeleteAll();
         }
     }
 }

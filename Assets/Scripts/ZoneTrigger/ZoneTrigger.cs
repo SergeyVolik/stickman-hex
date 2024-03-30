@@ -27,7 +27,7 @@ namespace Prototype
         }
 
         [FormerlySerializedAs("ToOpen")]
-        public GameObject[] NextLocations;
+        public HexLocation[] NextLocations;
         public ResourceContainer ResourceToOpen;
         private ResourceContainer m_CurrentDelayedResources;
         private ResourceContainer m_CurrentRealResources;
@@ -100,7 +100,7 @@ namespace Prototype
             {
                 foreach (var item in NextLocations)
                 {
-                    item.SetActive(false);
+                    item.gameObject.SetActive(false);
                 }
             }
         }
@@ -131,7 +131,7 @@ namespace Prototype
             m_worldToScreen?.Unregister(m_worldToScreenHandle);
             m_actByDist?.Unregister(m_ActivateByDistanceHandle);
 
-            if(m_ZoneUiInstance)
+            if (m_ZoneUiInstance)
                 m_ZoneUiInstance.gameObject.SetActive(false);
         }
 
@@ -173,27 +173,30 @@ namespace Prototype
             }
         }
 
-        private void Update()
+        private void CheckFinish()
         {
-            ZoneUI.forward = m_Camera.transform.forward;
-
             bool finished = ResourceToOpen.Equals(m_CurrentDelayedResources);
 
             if (finished == true)
             {
-                foreach (var locations in NextLocations)
+                Ease ease = Ease.Linear;
+                var seq = DOTween.Sequence().SetEase(ease);
+
+                float tweenDuration = 0.25f;
+                float inserT = 0f;
+                seq.Insert(inserT, m_ZoneUiInstance.transform.DOScale(0, tweenDuration));
+                inserT += tweenDuration;
+                seq.Insert(inserT, transform.DOScale(0, tweenDuration).OnComplete(() => { gameObject.SetActive(false); }));
+                inserT += tweenDuration;
+
+                var zonePos = transform.position;
+                var items = NextLocations.Select(e => e.transform).OrderBy((e) => Vector3.Distance(zonePos, e.transform.position));
+
+                foreach (var locations in items)
                 {
-                    locations.gameObject.SetActive(true);
-                    locations.transform.localScale = Vector3.zero;
-                    locations.transform.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutBack);
-                  
+                    DOVirtual.DelayedCall(inserT, locations.GetComponent<HexLocation>().Activate);
+                    inserT += tweenDuration;
                 }
-
-                transform.DOScale(0, 0.5f).OnComplete(() => {
-                    gameObject.SetActive(false);
-                });
-
-                m_ZoneUiInstance.transform.DOScale(0, 0.5f);
             }
         }
 
@@ -290,6 +293,8 @@ namespace Prototype
 
                 rb.velocity = Vector3.zero;
                 resourceObjectInstance.GetComponent<PoolObject>().Release();
+
+                CheckFinish();
             });
         }
 
