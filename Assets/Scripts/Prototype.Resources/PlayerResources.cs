@@ -6,6 +6,7 @@ namespace Prototype
         {
             this.resources = _resources;
         }
+
         public ResourceContainer resources;
     }
 }

@@ -10,6 +10,7 @@ namespace Prototype
         {
             if (other.GetComponent<PlayerCharacterInput>())
             {
+                SaveSceneHelper.ResetGameSceneSave();
                 SceneManager.LoadScene(0);
             }
         }

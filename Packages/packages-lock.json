@@ -233,6 +233,13 @@
       },
       "url": "https://packages.unity.com"
     },
+    "searous.serializableguid": {
+      "version": "git@github.com:SergeyVolik/Unity.SerializableGuid.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "4fc027cb717912f55159aecf514d02d6a12baecf"
+    },
     "xyz.candycoded.hapticfeedback": {
       "version": "https://github.com/CandyCoded/HapticFeedback.git#v1.0.3",
       "depth": 0,

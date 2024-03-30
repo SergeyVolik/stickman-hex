@@ -41,6 +41,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5461455999026472225}
   - component: {fileID: 957291056}
+  - component: {fileID: 3369854893147085220}
   m_Layer: 0
   m_Name: Workbench
   m_TagString: Untagged
@@ -90,6 +91,19 @@ MonoBehaviour:
   recycleItemDuration: 1
   itemToRecycle: 0
   recycleT: 0
+--- !u!65 &3369854893147085220
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5461455999026472254}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.9421592, y: 1, z: 1.6201556}
+  m_Center: {x: 0.4710796, y: 0.5, z: -0.011926055}
 --- !u!1001 &5461455999443744858
 PrefabInstance:
   m_ObjectHideFlags: 0

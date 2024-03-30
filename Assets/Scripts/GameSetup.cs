@@ -21,6 +21,12 @@ public class PlayerInputReader : IInputReader
     }
 }
 
+[System.Serializable]
+public class GameResources
+{
+    public ResourceTypeSO[] Value;
+}
+
 public class GameSetup : MonoInstaller
 {
     public ResourceContainer playerResources;
@@ -30,8 +36,9 @@ public class GameSetup : MonoInstaller
     public TransferMoveManager transferManager;
     public ActivateByDistanceToPlayerManager activateByDistance;
     public WorldToScreenUIManager worldToScreenUI;
-
     public GameObject playerPrefab;
+
+    public GameResources gameResources;
 
     public override void InstallBindings()
     {
@@ -45,6 +52,7 @@ public class GameSetup : MonoInstaller
         Container.Bind<TransferMoveManager>().FromInstance(transferManager);
         Container.Bind<ActivateByDistanceToPlayerManager>().FromInstance(activateByDistance);
         Container.Bind<WorldToScreenUIManager>().FromInstance(worldToScreenUI);
+        Container.Bind<GameResources>().FromInstance(gameResources);
 
         playerResourcesView.Bind(pResources.resources);
 
