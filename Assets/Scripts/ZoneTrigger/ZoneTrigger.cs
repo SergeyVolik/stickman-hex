@@ -14,6 +14,7 @@ namespace Prototype
     public class ZoneTriggerSave
     {
         public List<ResourceSaveItem> currentResources = new List<ResourceSaveItem>();
+        public bool finished;
     }
 
     public class ZoneTrigger : MonoBehaviour, ISaveable<ZoneTriggerSave>
@@ -42,7 +43,6 @@ namespace Prototype
         private GameResources m_gResources;
         public Transform TransferEndPoint;
         public ParticleSystem TransferParticle;
-        private Camera m_Camera;
 
         public float tickInterval = 0.05f;
         public float ItemMoveDelay = 1f;
@@ -60,6 +60,7 @@ namespace Prototype
         private ZoneTriggerUI m_ZoneUiInstance;
         private WordlToScreenUIItem m_worldToScreenHandle;
         private ActivateableByDistance m_ActivateByDistanceHandle;
+        private bool m_Finished;
 
         [Inject]
         void Construct(
@@ -82,6 +83,23 @@ namespace Prototype
 
             m_ZoneUiInstance = GameObject.Instantiate(ZoneUIPrefab, m_worldToScreen.Root);
             m_ZoneUiInstance.resourceView.Bind(ResourceToOpen, m_CurrentDelayedResources);
+
+            var activatable = GetComponent<ActivatableObject>();
+
+            activatable.onActivated += Activatable_onActivated;
+            activatable.onDeactivated += Activatable_onDeactivated;
+        }
+
+        private void Activatable_onDeactivated()
+        {
+            if(ZoneUI)
+            ZoneUI.gameObject.SetActive(false);
+        }
+
+        private void Activatable_onActivated()
+        {
+            if (ZoneUI)
+                ZoneUI.gameObject.SetActive(true);
         }
 
         public void Init()
@@ -94,13 +112,11 @@ namespace Prototype
 
             m_Inted = true;
 
-            m_Camera = Camera.main;
-
             if (NextLocations != null)
             {
                 foreach (var item in NextLocations)
                 {
-                    item.gameObject.SetActive(false);
+                    item.DeactivateInstant();
                 }
             }
         }
@@ -119,7 +135,7 @@ namespace Prototype
                 DistanceToActivate = 4,
                 ItemToActivate = m_ZoneUiInstance
             });
-
+            ZoneUI.gameObject.SetActive(true);
             if (m_ZoneUiInstance)
             {
                 m_ZoneUiInstance.gameObject.SetActive(true);
@@ -130,7 +146,7 @@ namespace Prototype
         {
             m_worldToScreen?.Unregister(m_worldToScreenHandle);
             m_actByDist?.Unregister(m_ActivateByDistanceHandle);
-
+            ZoneUI.gameObject.SetActive(false);
             if (m_ZoneUiInstance)
                 m_ZoneUiInstance.gameObject.SetActive(false);
         }
@@ -175,9 +191,9 @@ namespace Prototype
 
         private void CheckFinish()
         {
-            bool finished = ResourceToOpen.Equals(m_CurrentDelayedResources);
+            m_Finished = ResourceToOpen.Equals(m_CurrentDelayedResources);
 
-            if (finished == true)
+            if (m_Finished == true)
             {
                 Ease ease = Ease.Linear;
                 var seq = DOTween.Sequence().SetEase(ease);
@@ -328,7 +344,6 @@ namespace Prototype
             return transferData;
         }
 
-
         ZoneTriggerSave ISaveable<ZoneTriggerSave>.Save()
         {
             var zoneData = new ZoneTriggerSave();
@@ -339,14 +354,21 @@ namespace Prototype
                 {
                     count = item.Value,
                     resourceTypeHash = item.Key.GetHashCode()
+
                 });
             }
+            zoneData.finished = m_Finished;
 
             return zoneData;
         }
 
         public void Load(ZoneTriggerSave data)
         {
+            m_Finished = data.finished;
+
+            if(m_Finished)
+                gameObject.SetActive(false);
+
             foreach (var item in data.currentResources)
             {
                 var resource = m_gResources.Value.FirstOrDefault(e => item.resourceTypeHash == e.GetHashCode());

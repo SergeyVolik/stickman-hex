@@ -36,6 +36,8 @@ namespace Prototype
                 LoadItem(guid, item, saveObj.GameObjectSave);
                 LoadItem(guid, item, saveObj.ZoneSave);
                 LoadItem(guid, item, saveObj.RecyclingSave);
+                LoadItem(guid, item, saveObj.HexLocaSave);
+
             }
         }
 
@@ -75,6 +77,8 @@ namespace Prototype
                 SaveItem(guid, item, save.GameObjectSave);
                 SaveItem(guid, item, save.ZoneSave);
                 SaveItem(guid, item, save.RecyclingSave);
+                SaveItem(guid, item, save.HexLocaSave);
+
             }
 
             PlayerPrefs.SetString(SAVE_NAME, JsonConvert.SerializeObject(save));
@@ -88,7 +92,6 @@ namespace Prototype
         public Dictionary<SerializableGuid, GameObjectSave> GameObjectSave = new Dictionary<SerializableGuid, GameObjectSave>();
         public Dictionary<SerializableGuid, ZoneTriggerSave> ZoneSave = new Dictionary<SerializableGuid, ZoneTriggerSave>();
         public Dictionary<SerializableGuid, ResourceRecyclingSave> RecyclingSave = new Dictionary<SerializableGuid, ResourceRecyclingSave>();
-
-
+        public Dictionary<SerializableGuid, HexLocationSave> HexLocaSave = new Dictionary<SerializableGuid, HexLocationSave>();
     }
 }
