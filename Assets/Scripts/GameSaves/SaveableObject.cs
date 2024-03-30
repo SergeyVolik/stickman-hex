@@ -12,6 +12,7 @@ namespace Prototype
     public class TransformSave
     {
         public Vector3S position;
+        public QuaternionS rotation;
     }
 
     [DisallowMultipleComponent]
@@ -48,6 +49,7 @@ namespace Prototype
             if (savePosition)
             {
                 transform.position = data.position;
+                transform.rotation = data.rotation;
             }
         }
 
@@ -58,7 +60,8 @@ namespace Prototype
 
             return new TransformSave
             {
-                 position = transform.position,
+                position = transform.position,
+                rotation = transform.rotation
             };
         }
 

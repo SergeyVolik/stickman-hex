@@ -18,7 +18,7 @@ namespace Prototype
             m_Item.SetSprite(recicling.destinationResource.resourceIcon);
 
             m_recicling = recicling;
-            recicling.onChanged += Recicling_onChanged;
+            recicling.onProcessUpdatedChanged += Recicling_onChanged;
         }
 
         private void Recicling_onChanged()

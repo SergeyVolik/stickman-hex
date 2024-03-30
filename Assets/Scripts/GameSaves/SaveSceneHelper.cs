@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using Prototype;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 namespace Prototype
 {
@@ -31,23 +32,27 @@ namespace Prototype
             {
                 var guid = item.guid;
 
-                if (item.TryGetComponent<ISaveable<TransformSave>>(out var comp))
-                {
-                    if (saveObj.TransformSave.TryGetValue(guid, out var data))
-                        comp.Load(data);
-                }
+                LoadItem(guid, item, saveObj.TransformSave);
+                LoadItem(guid, item, saveObj.GameObjectSave);
+                LoadItem(guid, item, saveObj.ZoneSave);
+                LoadItem(guid, item, saveObj.RecyclingSave);
+            }
+        }
 
-                if (item.TryGetComponent<ISaveable<GameObjectSave>>(out var goSave))
-                {
-                    if (saveObj.GameObjectSave.TryGetValue(guid, out var data))                   
-                        goSave.Load(data);                   
-                }
+        private static void LoadItem<T>(SerializableGuid guid, Component item, Dictionary<SerializableGuid, T> saveObj)
+        {
+            if (item.TryGetComponent<ISaveable<T>>(out var recSave))
+            {
+                if (saveObj.TryGetValue(guid, out var data))
+                    recSave.Load(data);
+            }
+        }
 
-                if (item.TryGetComponent<ISaveable<ZoneTriggerSave>>(out var zoneSave))
-                {
-                    if (saveObj.ZoneSave.TryGetValue(guid, out var data))
-                        zoneSave.Load(data);
-                }
+        private static void SaveItem<T>(SerializableGuid guid, Component item, Dictionary<SerializableGuid, T> saveObj)
+        {
+            if (item.TryGetComponent<ISaveable<T>>(out var comp))
+            {
+                saveObj.Add(guid, comp.Save());
             }
         }
 
@@ -66,20 +71,10 @@ namespace Prototype
             {
                 var guid = item.guid;
 
-                if (item.TryGetComponent<ISaveable<TransformSave>>(out var comp))
-                {
-                    save.TransformSave.Add(guid, comp.Save());
-                }
-
-                if (item.TryGetComponent<ISaveable<GameObjectSave>>(out var goSave))
-                {
-                    save.GameObjectSave.Add(guid, goSave.Save());
-                }
-
-                if (item.TryGetComponent<ISaveable<ZoneTriggerSave>>(out var ztSave))
-                {
-                    save.ZoneSave.Add(guid, ztSave.Save());
-                }
+                SaveItem(guid, item, save.TransformSave);
+                SaveItem(guid, item, save.GameObjectSave);
+                SaveItem(guid, item, save.ZoneSave);
+                SaveItem(guid, item, save.RecyclingSave);
             }
 
             PlayerPrefs.SetString(SAVE_NAME, JsonConvert.SerializeObject(save));
@@ -92,6 +87,8 @@ namespace Prototype
         public Dictionary<SerializableGuid, TransformSave> TransformSave = new Dictionary<SerializableGuid, TransformSave>();
         public Dictionary<SerializableGuid, GameObjectSave> GameObjectSave = new Dictionary<SerializableGuid, GameObjectSave>();
         public Dictionary<SerializableGuid, ZoneTriggerSave> ZoneSave = new Dictionary<SerializableGuid, ZoneTriggerSave>();
+        public Dictionary<SerializableGuid, ResourceRecyclingSave> RecyclingSave = new Dictionary<SerializableGuid, ResourceRecyclingSave>();
+
 
     }
 }

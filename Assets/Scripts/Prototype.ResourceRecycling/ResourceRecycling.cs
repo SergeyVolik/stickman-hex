@@ -5,7 +5,13 @@ using Zenject;
 
 namespace Prototype
 {
-    public class ResourceRecycling : MonoBehaviour
+    [System.Serializable]
+    public class ResourceRecyclingSave
+    {
+        public int itemToRecycle;
+    }
+
+    public class ResourceRecycling : MonoBehaviour, ISaveable<ResourceRecyclingSave>
     {
         public ResourceTypeSO sourceResource;
         public ResourceTypeSO destinationResource;
@@ -41,7 +47,7 @@ namespace Prototype
         public float recycleT;
         private WordlToScreenUIItem m_WorldToScreenHandle2;
 
-        public event Action onChanged = delegate { };
+        public event Action onProcessUpdatedChanged = delegate { };
 
         [Inject]
         public void Construct(
@@ -83,7 +89,7 @@ namespace Prototype
                 m_PlayerResources.resources.AddResource(destinationResource, 1);
             }
 
-            onChanged.Invoke();
+            onProcessUpdatedChanged.Invoke();
         }
 
         private void OnEnable()
@@ -181,6 +187,21 @@ namespace Prototype
 
             m_UIInstance.destionationResourceUI.SetSprite(destinationResource.resourceIcon);
             m_UIInstance.destionationResourceUI.SetText(TextUtils.IntToText(nextRecicle));
+        }
+
+        public ResourceRecyclingSave Save()
+        {
+            return new ResourceRecyclingSave { 
+                 itemToRecycle = itemToRecycle
+            };
+        }
+
+        public void Load(ResourceRecyclingSave data)
+        {
+            if (data == null)
+                return;
+
+            itemToRecycle = data.itemToRecycle;
         }
     }
 }
