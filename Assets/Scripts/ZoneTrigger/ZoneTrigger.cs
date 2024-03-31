@@ -353,10 +353,11 @@ namespace Prototype
                 zoneData.currentResources.Add(new ResourceSaveItem
                 {
                     count = item.Value,
-                    resourceTypeHash = item.Key.GetHashCode()
+                    resourceTypeHash = item.Key.GetId()
 
                 });
             }
+            
             zoneData.finished = m_Finished;
 
             return zoneData;
@@ -371,7 +372,7 @@ namespace Prototype
 
             foreach (var item in data.currentResources)
             {
-                var resource = m_gResources.Value.FirstOrDefault(e => item.resourceTypeHash == e.GetHashCode());
+                var resource = m_gResources.Value.FirstOrDefault(e => item.resourceTypeHash == e.GetId());
                 m_CurrentRealResources.SetResource(resource, item.count);
                 m_CurrentDelayedResources.SetResource(resource, item.count);
             }

@@ -49,7 +49,7 @@ namespace Prototype
                 save.playerResources.Add(new ResourceSaveItem
                 {
                     count = item.Value,
-                    resourceTypeHash = item.Key.GetHashCode(),
+                    resourceTypeHash = item.Key.GetId(),
                 });
             }
 
@@ -71,7 +71,7 @@ namespace Prototype
 
             foreach (var item in saveData.playerResources)
             {
-                var resType = m_gResources.Value.FirstOrDefault(e => e.GetHashCode() == item.resourceTypeHash);
+                var resType = m_gResources.Value.FirstOrDefault(e => e.GetId() == item.resourceTypeHash);
                 m_Resource.resources.SetResource(resType, item.count);
             }
         }
