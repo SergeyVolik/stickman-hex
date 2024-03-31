@@ -58,7 +58,7 @@ namespace Prototype
             }
         }
 
-        public static void ResetGameSceneSave()
+        public static void RemoveSave()
         {
             PlayerPrefs.DeleteKey(SAVE_NAME);
         }

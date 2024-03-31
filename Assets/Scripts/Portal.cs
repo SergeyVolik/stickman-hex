@@ -14,6 +14,7 @@ namespace Prototype
         {
             m_SaveManager = manager;
         }
+
         private void OnTriggerEnter(Collider other)
         {
             if (other.GetComponent<PlayerCharacterInput>())

@@ -88,7 +88,11 @@ namespace Prototype
 
         public void RemoveSaves()
         {
-            PlayerPrefs.DeleteAll();
+            if (PlayerPrefs.HasKey(PLAYER_SAVE_KEY))
+            {
+                PlayerPrefs.DeleteKey(PLAYER_SAVE_KEY);
+                SaveSceneHelper.RemoveSave();
+            }
         }
     }
 }
