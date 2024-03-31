@@ -163,10 +163,16 @@ namespace Prototype
 
             m_PlayerResources.resources.onResourceChanged += Resources_onResourceChanged;
             Resources_onResourceChanged(null, 0);
+
+            m_UIRecycleViewInstance.gameObject.SetActive(true);
+            m_UIInstance.gameObject.SetActive(true);
         }
 
         private void OnDisable()
         {
+            m_UIRecycleViewInstance.gameObject.SetActive(false);
+            m_UIInstance.gameObject.SetActive(false);
+
             m_wtsManager.Unregister(m_WorldToScreenHandle2);
             m_wtsManager.Unregister(m_WorldToScreenHandle);
             m_actManager.Unregister(m_ActByDistHandle);
