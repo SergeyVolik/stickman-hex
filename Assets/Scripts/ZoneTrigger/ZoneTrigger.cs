@@ -60,6 +60,8 @@ namespace Prototype
         private ZoneTriggerUI m_ZoneUiInstance;
         private WordlToScreenUIItem m_worldToScreenHandle;
         private ActivateableByDistance m_ActivateByDistanceHandle;
+
+        [SerializeField]
         private bool m_Finished;
 
         [Inject]
@@ -92,8 +94,8 @@ namespace Prototype
 
         private void Activatable_onDeactivated()
         {
-            if(ZoneUI)
-            ZoneUI.gameObject.SetActive(false);
+            if (ZoneUI)
+                ZoneUI.gameObject.SetActive(false);
         }
 
         private void Activatable_onActivated()
@@ -191,6 +193,11 @@ namespace Prototype
 
         private void CheckFinish()
         {
+            if (m_Finished == true)
+            {
+                return;
+            }
+
             m_Finished = ResourceToOpen.Equals(m_CurrentDelayedResources);
 
             if (m_Finished == true)
@@ -271,6 +278,15 @@ namespace Prototype
 
         private void ExecuteSpawn(Transform transferFrom, ResourceContainer playerRes, float currentTransfer, TransferData resourceItem, float tweenDestination, out bool isFinished)
         {
+            isFinished = currentTransfer == tweenDestination;
+
+            int resourcesToTransfer = (int)currentTransfer;
+
+            if (resourcesToTransfer - resourceItem.LastTransferedResources < 1)
+            { 
+                return;
+            }
+
             Vector3 startPos = transferFrom.position;
             Vector3 endPos = TransferEndPoint.position;
             float gravity = Physics.gravity.y;
@@ -280,11 +296,10 @@ namespace Prototype
             LaunchData predictedVel = MathExt.GetPredictedVelocity(
                            startPos, endPos, gravity, itemMaxHeight);
 
-            isFinished = currentTransfer == tweenDestination;
 
             TransferParticle?.Play();
 
-            int resourcesToTransfer = (int)currentTransfer;
+
             playerRes.AddResource(resourceItem.ResourceType, resourceItem.LastTransferedResources);
             playerRes.RemoveResource(resourceItem.ResourceType, resourcesToTransfer);
 
@@ -357,7 +372,7 @@ namespace Prototype
 
                 });
             }
-            
+
             zoneData.finished = m_Finished;
 
             return zoneData;
@@ -367,7 +382,7 @@ namespace Prototype
         {
             m_Finished = data.finished;
 
-            if(m_Finished)
+            if (m_Finished)
                 gameObject.SetActive(false);
 
             foreach (var item in data.currentResources)

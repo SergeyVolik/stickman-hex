@@ -26,11 +26,6 @@ namespace Prototype
 
         private const string PLAYER_SAVE_KEY = "PLAYER_SAVE_KEY";
 
-        private void Awake()
-        {
-            Load();
-        }
-
         [Inject]
         void Construct(PlayerResources pResources, GameResources gResources)
         {
@@ -40,8 +35,6 @@ namespace Prototype
 
         public void Save()
         {
-            SaveSceneHelper.SaveGameScene();
-
             var save = new PlayerSaveData();
 
             foreach (var item in m_Resource.resources.ResourceIterator())
@@ -54,6 +47,8 @@ namespace Prototype
             }
 
             PlayerPrefs.SetString(PLAYER_SAVE_KEY, JsonConvert.SerializeObject(save));
+
+            SaveSceneHelper.SaveGameScene();
         }
 
         public void Load()
@@ -62,8 +57,6 @@ namespace Prototype
 
             if (!PlayerPrefs.HasKey(PLAYER_SAVE_KEY))
                 return;
-
-            SaveSceneHelper.LoadGameScene();
 
             var saveData = JsonConvert.DeserializeObject<PlayerSaveData>(PlayerPrefs.GetString(PLAYER_SAVE_KEY));
 
@@ -74,6 +67,8 @@ namespace Prototype
                 var resType = m_gResources.Value.FirstOrDefault(e => e.GetId() == item.resourceTypeHash);
                 m_Resource.resources.SetResource(resType, item.count);
             }
+
+            SaveSceneHelper.LoadGameScene();
         }
 
         private void OnApplicationPause(bool pause)

@@ -40,29 +40,36 @@ public class GameSetup : MonoInstaller
 
     public GameResources gameResources;
     public SaveManager saveManager;
+    private PlayerSpawnFactory m_playerFactory;
+    private PlayerResources m_pResources;
 
     public override void InstallBindings()
     {
-        var playerFactory = new PlayerSpawnFactory(playerPrefab, Container);
-        var pResources = new PlayerResources(playerResources);
+        m_playerFactory = new PlayerSpawnFactory(playerPrefab, Container);
+        m_pResources = new PlayerResources(playerResources);
 
         Container.Bind<IInputReader>().FromInstance(new PlayerInputReader(joystick));
-        Container.Bind<PlayerResources>().FromInstance(pResources);
-        Container.Bind<IPlayerFactory>().FromInstance(playerFactory);
+        Container.Bind<PlayerResources>().FromInstance(m_pResources);
+        Container.Bind<IPlayerFactory>().FromInstance(m_playerFactory);
         Container.Bind<CameraController>().FromInstance(cameraController);
         Container.Bind<TransferMoveManager>().FromInstance(transferManager);
         Container.Bind<ActivateByDistanceToPlayerManager>().FromInstance(activateByDistance);
         Container.Bind<WorldToScreenUIManager>().FromInstance(worldToScreenUI);
         Container.Bind<GameResources>().FromInstance(gameResources);
         Container.Bind<SaveManager>().FromInstance(saveManager);
+    }
 
-        playerResourcesView.Bind(pResources.resources);
+    private void Awake()
+    {
+        playerResourcesView.Bind(m_pResources.resources);
 
-        foreach (var item in FindObjectsOfType<ZoneTrigger>())
+        foreach (var item in FindObjectsOfType<ZoneTrigger>(true))
         {
             item.Init();
         }
 
-        playerFactory.SpawnAtPosition(new Vector3(0, 0, 0));
+        m_playerFactory.SpawnAtPosition(new Vector3(0, 0, 0));
+
+        saveManager.Load();
     }
 }

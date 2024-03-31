@@ -17,6 +17,7 @@ namespace Prototype
         private ActivatableObject[] m_Activateables;
         public GameObject Wall;
         public float activationDelays = 0.5f;
+
         public void Activate()
         {
             Wall.SetActive(false);

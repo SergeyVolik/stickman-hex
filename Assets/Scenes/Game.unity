@@ -668,7 +668,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 112359894}
-  m_LocalRotation: {x: 0.49647754, y: 0.000000014389837, z: -0.00000000823021, w: 0.8680496}
+  m_LocalRotation: {x: 0.4964775, y: -0.000000039313726, z: 0.00000002248533, w: 0.8680496}
   m_LocalPosition: {x: 0, y: 17, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -5241,7 +5241,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0.49647754, y: 0.000000014389837, z: -0.00000000823021, w: 0.8680496}
+  m_LocalRotation: {x: 0.4964775, y: -0.000000039313726, z: 0.00000002248533, w: 0.8680496}
   m_LocalPosition: {x: 0, y: 17, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -9533,13 +9533,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerResources:
-    m_InitResources:
-    - count: 300
-      resourceType: {fileID: 11400000, guid: 23cc17bff32fb7f4f8ad5e221744ff3f, type: 2}
-    - count: 1000
-      resourceType: {fileID: 11400000, guid: 0cf10383d9d353a478614696398da3f3, type: 2}
-    - count: 1000
-      resourceType: {fileID: 11400000, guid: 8f488db5fe418c049ab012a9e34028f6, type: 2}
+    m_InitResources: []
   joystick: {fileID: 458541930}
   playerResourcesView: {fileID: 730968994}
   cameraController: {fileID: 638874003}

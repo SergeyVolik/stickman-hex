@@ -1,8 +1,6 @@
 using Newtonsoft.Json;
-using Prototype;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 namespace Prototype
 {
@@ -32,12 +30,11 @@ namespace Prototype
             {
                 var guid = item.guid;
 
+                LoadItem(guid, item, saveObj.HexLocaSave);
                 LoadItem(guid, item, saveObj.TransformSave);
                 LoadItem(guid, item, saveObj.GameObjectSave);
                 LoadItem(guid, item, saveObj.ZoneSave);
-                LoadItem(guid, item, saveObj.RecyclingSave);
-                LoadItem(guid, item, saveObj.HexLocaSave);
-
+                LoadItem(guid, item, saveObj.RecyclingSave);              
             }
         }
 
@@ -73,12 +70,11 @@ namespace Prototype
             {
                 var guid = item.guid;
 
+                SaveItem(guid, item, save.HexLocaSave);
                 SaveItem(guid, item, save.TransformSave);
                 SaveItem(guid, item, save.GameObjectSave);
                 SaveItem(guid, item, save.ZoneSave);
-                SaveItem(guid, item, save.RecyclingSave);
-                SaveItem(guid, item, save.HexLocaSave);
-
+                SaveItem(guid, item, save.RecyclingSave);          
             }
 
             PlayerPrefs.SetString(SAVE_NAME, JsonConvert.SerializeObject(save));
