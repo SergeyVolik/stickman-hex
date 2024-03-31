@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 namespace Prototype
 {
@@ -21,37 +22,40 @@ namespace Prototype
             }
 
             var saveableObjects = GameObject.FindObjectsOfType<SaveableObject>(includeInactive: true);
-
             var saveString = PlayerPrefs.GetString(SAVE_NAME);
 
             var saveObj = JsonConvert.DeserializeObject<SceneSaveData>(saveString);
 
+            LoadItem(saveObj.HexLocaSave, saveableObjects);
+            LoadItem(saveObj.TransformSave, saveableObjects);
+            LoadItem(saveObj.GameObjectSave, saveableObjects);
+            LoadItem(saveObj.ZoneSave, saveableObjects);
+            LoadItem(saveObj.RecyclingSave, saveableObjects);
+        }
+
+        private static void LoadItem<T>(Dictionary<SerializableGuid, T> saveObj, IEnumerable<SaveableObject> saveableObjects)
+        {
             foreach (var item in saveableObjects)
             {
                 var guid = item.guid;
 
-                LoadItem(guid, item, saveObj.HexLocaSave);
-                LoadItem(guid, item, saveObj.TransformSave);
-                LoadItem(guid, item, saveObj.GameObjectSave);
-                LoadItem(guid, item, saveObj.ZoneSave);
-                LoadItem(guid, item, saveObj.RecyclingSave);              
+                if (item.TryGetComponent<ISaveable<T>>(out var recSave))
+                {
+                    if (saveObj.TryGetValue(guid, out var data))
+                        recSave.Load(data);
+                }
             }
         }
 
-        private static void LoadItem<T>(SerializableGuid guid, Component item, Dictionary<SerializableGuid, T> saveObj)
+        private static void SaveItem<T>(Dictionary<SerializableGuid, T> saveObj, IEnumerable<SaveableObject> saveableObjects)
         {
-            if (item.TryGetComponent<ISaveable<T>>(out var recSave))
+            foreach (var item in saveableObjects)
             {
-                if (saveObj.TryGetValue(guid, out var data))
-                    recSave.Load(data);
-            }
-        }
-
-        private static void SaveItem<T>(SerializableGuid guid, Component item, Dictionary<SerializableGuid, T> saveObj)
-        {
-            if (item.TryGetComponent<ISaveable<T>>(out var comp))
-            {
-                saveObj.Add(guid, comp.Save());
+                var guid = item.guid;
+                if (item.TryGetComponent<ISaveable<T>>(out var comp))
+                {
+                    saveObj.Add(guid, comp.Save());
+                }
             }
         }
 
@@ -66,16 +70,11 @@ namespace Prototype
 
             var save = new SceneSaveData();
 
-            foreach (var item in saveableObjects)
-            {
-                var guid = item.guid;
-
-                SaveItem(guid, item, save.HexLocaSave);
-                SaveItem(guid, item, save.TransformSave);
-                SaveItem(guid, item, save.GameObjectSave);
-                SaveItem(guid, item, save.ZoneSave);
-                SaveItem(guid, item, save.RecyclingSave);          
-            }
+            SaveItem(save.HexLocaSave, saveableObjects);
+            SaveItem(save.TransformSave, saveableObjects);
+            SaveItem(save.GameObjectSave, saveableObjects);
+            SaveItem(save.ZoneSave, saveableObjects);
+            SaveItem(save.RecyclingSave, saveableObjects);
 
             PlayerPrefs.SetString(SAVE_NAME, JsonConvert.SerializeObject(save));
         }

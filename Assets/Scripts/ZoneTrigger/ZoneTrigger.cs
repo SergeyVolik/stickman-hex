@@ -88,20 +88,20 @@ namespace Prototype
 
             var activatable = GetComponent<ActivatableObject>();
 
-            activatable.onActivated += Activatable_onActivated;
-            activatable.onDeactivated += Activatable_onDeactivated;
+            activatable.onActivated += EnableUI;
+            activatable.onDeactivated += DisableUI;
         }
 
-        private void Activatable_onDeactivated()
+        private void DisableUI()
         {
-            if (ZoneUI)
-                ZoneUI.gameObject.SetActive(false);
+            if (m_ZoneUiInstance)
+                m_ZoneUiInstance.gameObject.SetActive(false);
         }
 
-        private void Activatable_onActivated()
+        private void EnableUI()
         {
-            if (ZoneUI)
-                ZoneUI.gameObject.SetActive(true);
+            if (m_ZoneUiInstance)
+                m_ZoneUiInstance.gameObject.SetActive(true);
         }
 
         public void Init()
@@ -137,20 +137,16 @@ namespace Prototype
                 DistanceToActivate = 4,
                 ItemToActivate = m_ZoneUiInstance
             });
-            ZoneUI.gameObject.SetActive(true);
-            if (m_ZoneUiInstance)
-            {
-                m_ZoneUiInstance.gameObject.SetActive(true);
-            }
+
+            EnableUI();
         }
 
         private void OnDisable()
         {
             m_worldToScreen?.Unregister(m_worldToScreenHandle);
             m_actByDist?.Unregister(m_ActivateByDistanceHandle);
-            ZoneUI.gameObject.SetActive(false);
-            if (m_ZoneUiInstance)
-                m_ZoneUiInstance.gameObject.SetActive(false);
+
+            DisableUI();
         }
 
         private void OnTriggerEnter(Collider other)
@@ -381,9 +377,7 @@ namespace Prototype
         public void Load(ZoneTriggerSave data)
         {
             m_Finished = data.finished;
-
-            if (m_Finished)
-                gameObject.SetActive(false);
+            gameObject.SetActive(!m_Finished);
 
             foreach (var item in data.currentResources)
             {

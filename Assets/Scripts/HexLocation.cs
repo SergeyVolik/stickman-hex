@@ -15,6 +15,7 @@ namespace Prototype
 
         [SerializeField]
         private ActivatableObject[] m_Activateables;
+
         public GameObject Wall;
         public float activationDelays = 0.5f;
 
