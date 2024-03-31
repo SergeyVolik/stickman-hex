@@ -100,7 +100,7 @@ PrefabInstance:
     - target: {fileID: 3052649895966819385, guid: 1f6cdd123875b1849959cc8cc43dfe10,
         type: 3}
       propertyPath: m_StartResource.m_InitResources.Array.data[0].count
-      value: 10
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 3052649895966819385, guid: 1f6cdd123875b1849959cc8cc43dfe10,
         type: 3}
