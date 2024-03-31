@@ -25,6 +25,7 @@ namespace Prototype
         private WorldToScreenUIManager m_wtsManager;
         private ActivateByDistanceToPlayerManager m_actManager;
         private TransferMoveManager m_TransManager;
+        private WorldSpaceMessageFactory m_wpsFactory;
 
         [SerializeField]
         private RecycleUI m_UIPrefab;
@@ -38,6 +39,9 @@ namespace Prototype
         private ActivateableByDistance m_ActByDistHandle;
         [SerializeField]
         private Transform m_UiBindPoint;
+
+        [SerializeField]
+        private Transform m_WorldMessageSpawnPoint;
 
         public float distanceToActivateUI = 2f;
 
@@ -55,13 +59,15 @@ namespace Prototype
              IPlayerFactory playerFactory,
              WorldToScreenUIManager wtsManager,
              ActivateByDistanceToPlayerManager actManager,
-             TransferMoveManager transManager)
+             TransferMoveManager transManager,
+             WorldSpaceMessageFactory wpsFactory)
         {
             m_PlayerResources = resources;
             m_PlayerFactory = playerFactory;
             m_wtsManager = wtsManager;
             m_actManager = actManager;
             m_TransManager = transManager;
+            m_wpsFactory = wpsFactory;
         }
 
         public float GetCurrentProcessProgress() => recycleT / recycleItemDuration;
@@ -71,9 +77,9 @@ namespace Prototype
             m_UIRecycleViewInstance = GameObject.Instantiate(m_UIRecycleViewUiPrefab, m_wtsManager.Root);
             m_UIInstance = GameObject.Instantiate(m_UIPrefab, m_wtsManager.Root);
 
-            m_UIRecycleViewInstance.Deactivate();
             m_UIInstance.Deactivate();
         }
+
 
         private void Update()
         {
@@ -86,6 +92,9 @@ namespace Prototype
             {
                 recycleT = 0;
                 itemToRecycle--;
+
+                m_wpsFactory.SpawnAtPosition(m_WorldMessageSpawnPoint.position, "+1", destinationResource.resourceIcon);
+
                 m_PlayerResources.resources.AddResource(destinationResource, 1);
             }
 

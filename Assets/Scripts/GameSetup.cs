@@ -43,10 +43,13 @@ public class GameSetup : MonoInstaller
     private PlayerSpawnFactory m_playerFactory;
     private PlayerResources m_pResources;
 
+    public WorldSpaceMessage m_SpaceMessagePrefab;
+
     public override void InstallBindings()
     {
         m_playerFactory = new PlayerSpawnFactory(playerPrefab, Container);
         m_pResources = new PlayerResources(playerResources);
+        var messageFactory = new WorldSpaceMessageFactory(m_SpaceMessagePrefab);
 
         Container.Bind<IInputReader>().FromInstance(new PlayerInputReader(joystick));
         Container.Bind<PlayerResources>().FromInstance(m_pResources);
@@ -57,6 +60,7 @@ public class GameSetup : MonoInstaller
         Container.Bind<WorldToScreenUIManager>().FromInstance(worldToScreenUI);
         Container.Bind<GameResources>().FromInstance(gameResources);
         Container.Bind<SaveManager>().FromInstance(saveManager);
+        Container.Bind<WorldSpaceMessageFactory>().FromInstance(messageFactory);
     }
 
     private void Awake()

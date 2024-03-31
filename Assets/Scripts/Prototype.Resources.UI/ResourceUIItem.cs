@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,6 +8,14 @@ namespace Prototype
     {
         public TMPro.TextMeshProUGUI itemText;
         public Image spriteImage;
+        private Tweener m_Tween;
+
+        public void DoAnimation()
+        {
+            m_Tween?.Kill();
+            transform.localScale = Vector3.one;
+            m_Tween = transform.DOPunchScale(new Vector3(0.1f, 0.1f, 0.1f), 0.3f);
+        }
 
         public void SetText(string value)
         {

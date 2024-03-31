@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
@@ -24,6 +25,7 @@ namespace Prototype
             if (uiItems.TryGetValue(arg1, out var item))
             {
                 item.SetText(TextUtils.IntToText(arg2));
+                item.DoAnimation();
             }
             else
             {

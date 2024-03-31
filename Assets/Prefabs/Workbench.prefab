@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &51029050
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 51029051}
+  m_Layer: 0
+  m_Name: MessageSpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 3936346786652291628, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &51029051
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 51029050}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.754, y: 0.276, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5461455999026472225}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &848979074
 GameObject:
   m_ObjectHideFlags: 0
@@ -24,7 +55,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 848979074}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.979, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -42,10 +73,11 @@ GameObject:
   - component: {fileID: 5461455999026472225}
   - component: {fileID: 957291056}
   - component: {fileID: 3369854893147085220}
+  - component: {fileID: 5427811154776999940}
   m_Layer: 0
   m_Name: Workbench
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 3936346786652291628, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -63,6 +95,7 @@ Transform:
   m_Children:
   - {fileID: 5494466547834970033}
   - {fileID: 848979075}
+  - {fileID: 51029051}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -82,11 +115,13 @@ MonoBehaviour:
   destinationResource: {fileID: 11400000, guid: 26e1535583bce394f94648f1814d5fe5,
     type: 2}
   itemsToDestResource: 2
+  message: {fileID: 0}
   m_UIPrefab: {fileID: 5055512166671350808, guid: 1000900477368374b8d81e3e3f7de478,
     type: 3}
   m_UIRecycleViewUiPrefab: {fileID: 1292509043, guid: fcac1216cf4d7d4429b99c493829afce,
     type: 3}
   m_UiBindPoint: {fileID: 848979075}
+  m_WorldMessageSpawnPoint: {fileID: 51029051}
   distanceToActivateUI: 3
   recycleItemDuration: 1
   itemToRecycle: 0
@@ -104,6 +139,22 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.9421592, y: 1, z: 1.6201556}
   m_Center: {x: 0.4710796, y: 0.5, z: -0.011926055}
+--- !u!114 &5427811154776999940
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5461455999026472254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea72ab34a97670d49b16a1898f426b1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  guid:
+    serializedGuid: 20685b83-83eb-4353-a617-601416dff3e0
+  savePosition: 0
+  saveActiveState: 0
 --- !u!1001 &5461455999443744858
 PrefabInstance:
   m_ObjectHideFlags: 0

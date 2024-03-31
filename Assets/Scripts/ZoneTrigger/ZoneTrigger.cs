@@ -377,7 +377,9 @@ namespace Prototype
         public void Load(ZoneTriggerSave data)
         {
             m_Finished = data.finished;
-            gameObject.SetActive(!m_Finished);
+
+            if(m_Finished)
+                gameObject.SetActive(false);
 
             foreach (var item in data.currentResources)
             {

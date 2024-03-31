@@ -10,7 +10,7 @@ namespace Prototype
     {
         private Vector3 m_Scale;
         private Transform m_Trans;
-        bool m_IsActive = true;
+        protected bool m_IsActive = true;
         private TweenerCore<Vector3, Vector3, VectorOptions> m_DeactivateTween;
         private TweenerCore<Vector3, Vector3, VectorOptions> m_ActivateTween;
 
@@ -20,7 +20,7 @@ namespace Prototype
             m_Scale = m_Trans.localScale;
         }
 
-        public void Activate()
+        public virtual void Activate()
         {
             if (m_IsActive)
                 return;
@@ -33,7 +33,7 @@ namespace Prototype
                 m_DeactivateTween.Kill();
         }
 
-        public void Deactivate()
+        public virtual void Deactivate()
         {
             if (!m_IsActive)
                 return;

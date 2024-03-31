@@ -31,8 +31,6 @@ namespace Prototype
         [SerializeField]
         private GameObject[] m_Parts;
 
-        public WorldSpaceMessage MessagePrefab;
-
         [SerializeField]
         private ResourceContainer m_StartResource;
         private ResourceContainer m_ArlreadyDroppedResources;
@@ -40,12 +38,14 @@ namespace Prototype
         private HealthData m_Health;
         private Collider m_Collider;
         private TransferMoveManager m_TransManager;
+        private WorldSpaceMessageFactory m_wsmFactory;
         int m_PrevActivateParts;    
 
         [Inject]
-        void Construct(TransferMoveManager transManager)
+        void Construct(TransferMoveManager transManager, WorldSpaceMessageFactory wsmFactory)
         {
             m_TransManager = transManager;
+            m_wsmFactory = wsmFactory;
         }
 
        
@@ -177,9 +177,8 @@ namespace Prototype
 
                     m_ArlreadyDroppedResources.SetResource(resourceType, healthDiffToDrop);
                     holder.Resources.AddResource(resourceType, toDrop);
-
-                    var worldMessageInst = GameObjectPool.GetPoolObject(MessagePrefab);
-                    worldMessageInst.Show(m_PartsParent.position, $"+{toDrop}", item.Key.resourceIcon);
+                               
+                    m_wsmFactory.SpawnAtPosition(m_PartsParent.position, $"+{toDrop}", item.Key.resourceIcon);
 
                     int transferVisualCount = math.clamp(toDrop, 0, maxFropItems);
 
