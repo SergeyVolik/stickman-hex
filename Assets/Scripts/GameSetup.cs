@@ -21,12 +21,6 @@ public class PlayerInputReader : IInputReader
     }
 }
 
-[System.Serializable]
-public class GameResources
-{
-    public ResourceTypeSO[] Value;
-}
-
 public class GameSetup : MonoInstaller
 {
     public ResourceContainer playerResources;

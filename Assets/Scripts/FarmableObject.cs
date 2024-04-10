@@ -47,8 +47,7 @@ namespace Prototype
             m_TransManager = transManager;
             m_wsmFactory = wsmFactory;
         }
-
-       
+      
         private void Awake()
         {
             m_Health = GetComponent<HealthData>();

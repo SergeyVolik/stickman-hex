@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.Rendering;
 using UnityEngine;
 using Zenject;
 
@@ -19,7 +20,7 @@ namespace Prototype
         public int count;
     }
 
-    public class SaveManager : MonoBehaviour
+    public class SaveManager : PlayerPrefsSaveManager<PlayerSaveData>
     {
         private PlayerResources m_Resource;
         private GameResources m_gResources;
@@ -33,10 +34,8 @@ namespace Prototype
             m_gResources = gResources;
         }
 
-        public void Save()
+        public override void SavePass(PlayerSaveData save)
         {
-            var save = new PlayerSaveData();
-
             foreach (var item in m_Resource.resources.ResourceIterator())
             {
                 save.playerResources.Add(new ResourceSaveItem
@@ -46,12 +45,10 @@ namespace Prototype
                 });
             }
 
-            PlayerPrefs.SetString(PLAYER_SAVE_KEY, JsonConvert.SerializeObject(save));
-
             SaveSceneHelper.SaveGameScene();
         }
 
-        public void Load()
+        public override void LoadPass(PlayerSaveData LoadData)
         {
             Debug.Log("Load");
 
@@ -71,18 +68,28 @@ namespace Prototype
             SaveSceneHelper.LoadGameScene();
         }
 
+        public void Load()
+        {
+            Load(PLAYER_SAVE_KEY);
+        }
+
+        public void Save()
+        {
+            Save(PLAYER_SAVE_KEY);
+        }
+
         private void OnApplicationPause(bool pause)
         {
             if (pause == true)
             {
-                Save();
+                Save(PLAYER_SAVE_KEY);
                 Debug.Log("OnApplicationPause Save");
             }
         }
 
         private void OnApplicationQuit()
         {
-            Save();
+            Save(PLAYER_SAVE_KEY);
             Debug.Log("OnApplicationQuit Save");
         }
 

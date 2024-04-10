@@ -170,8 +170,11 @@ namespace Prototype
 
         private void OnDisable()
         {
-            m_UIRecycleViewInstance.gameObject.SetActive(false);
-            m_UIInstance.gameObject.SetActive(false);
+            if(m_UIRecycleViewInstance)
+                m_UIRecycleViewInstance.gameObject.SetActive(false);
+
+            if(m_UIInstance)
+                m_UIInstance.gameObject.SetActive(false);
 
             m_wtsManager.Unregister(m_WorldToScreenHandle2);
             m_wtsManager.Unregister(m_WorldToScreenHandle);
