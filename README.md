@@ -1,4 +1,4 @@
-# Prototype Farm-Simulator
+# Stickamn Farm-Simulator
 Механика игры была взята с [My Little Universe](https://play.google.com/store/apps/details?id=com.savetheworld.game).
 
 # Dependencies
